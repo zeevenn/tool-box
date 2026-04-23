@@ -1,9 +1,10 @@
 import { SiGithub } from '@icons-pack/react-simple-icons'
-import { Menu, X } from 'lucide-react'
+import { Menu, Moon, Sun, SunMoon, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
 
 import { navigationItems } from '@/config/navigation'
+import { useTheme } from '@/context/theme-provider'
 import { cn } from '@/lib/utils'
 
 import { Logo } from '../common/logo'
@@ -14,10 +15,24 @@ interface HeaderProps {
   className?: string
 }
 
+type ThemeCycle = 'light' | 'dark' | 'system'
+const THEME_CYCLE: ThemeCycle[] = ['light', 'dark', 'system']
+const THEME_ICONS: Record<ThemeCycle, React.ReactNode> = {
+  light: <Sun className="w-4 h-4" />,
+  dark: <Moon className="w-4 h-4" />,
+  system: <SunMoon className="w-4 h-4" />,
+}
+
 export function Header({ className = '' }: HeaderProps) {
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { theme, setTheme } = useTheme()
   const isActive = (path: string) => location.pathname === path
+
+  const cycleTheme = () => {
+    const current = THEME_CYCLE.indexOf(theme as ThemeCycle)
+    setTheme(THEME_CYCLE[(current + 1) % THEME_CYCLE.length])
+  }
 
   const handleLinkClick = () => {
     setMobileMenuOpen(false)
@@ -60,6 +75,10 @@ export function Header({ className = '' }: HeaderProps) {
 
             {/* Actions */}
             <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={cycleTheme} title={`Theme: ${theme}`}>
+                {THEME_ICONS[theme as ThemeCycle] ?? <SunMoon className="w-4 h-4" />}
+              </Button>
+
               <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
                 <a
                   href="https://github.com/zeevenn/tool-box"

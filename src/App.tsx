@@ -5,7 +5,18 @@ import { NotFound } from './components/common'
 import { Layout } from './components/layout'
 import { useTheme } from './context/theme-provider'
 import { useDynamicFavicon } from './hooks/use-dynamic-favicon'
-import { ImageDiff, TextDiff } from './pages'
+import {
+  Base64,
+  ColorConverter,
+  HashGenerator,
+  ImageDiff,
+  JsonFormatter,
+  JwtDecoder,
+  RegexTester,
+  TextDiff,
+  TimestampConverter,
+  UrlEncode,
+} from './pages'
 
 function App() {
   useDynamicFavicon()
@@ -18,6 +29,14 @@ function App() {
         <Routes>
           <Route path="/" element={<TextDiff />} />
           <Route path="/image" element={<ImageDiff />} />
+          <Route path="/json" element={<JsonFormatter />} />
+          <Route path="/base64" element={<Base64 />} />
+          <Route path="/url-encode" element={<UrlEncode />} />
+          <Route path="/hash" element={<HashGenerator />} />
+          <Route path="/regex" element={<RegexTester />} />
+          <Route path="/timestamp" element={<TimestampConverter />} />
+          <Route path="/jwt" element={<JwtDecoder />} />
+          <Route path="/color" element={<ColorConverter />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
