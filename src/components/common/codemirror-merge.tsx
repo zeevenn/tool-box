@@ -5,7 +5,7 @@ import { MergeView } from '@codemirror/merge'
 import { EditorState } from '@codemirror/state'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { EditorView, lineNumbers } from '@codemirror/view'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 import { useTheme } from '@/context/theme-provider'
 
@@ -40,7 +40,6 @@ export function CodeMirrorMerge({
   const mergeViewRef = useRef<MergeView | null>(null)
   const { resolvedTheme } = useTheme()
 
-  // Store latest callbacks in refs to avoid recreation
   const callbacksRef = useRef({
     onOriginalChange,
     onModifiedChange,
@@ -54,8 +53,8 @@ export function CodeMirrorMerge({
     onModifiedPaste,
   }
 
-  const getBaseExtensions = (): Extension[] => {
-    const baseExtensions: Extension[] = [
+  const baseExtensions = useMemo((): Extension[] => {
+    const exts: Extension[] = [
       lineNumbers(),
       foldGutter(),
       indentOnInput(),
@@ -63,28 +62,22 @@ export function CodeMirrorMerge({
       EditorView.lineWrapping,
       EditorState.allowMultipleSelections.of(true),
     ]
-
     if (language) {
-      baseExtensions.push(language)
+      exts.push(language)
     }
-
     if (resolvedTheme === 'dark') {
-      return [...baseExtensions, oneDark]
+      exts.push(oneDark)
     }
-    return baseExtensions
-  }
+    return exts
+  }, [resolvedTheme, language])
 
-  // Create and manage the MergeView
   useEffect(() => {
     if (!containerRef.current)
       return
 
-    // Clean up previous instance
     if (mergeViewRef.current) {
       mergeViewRef.current.destroy()
     }
-
-    const baseExtensions = getBaseExtensions()
 
     const mergeView = new MergeView({
       a: {
@@ -152,10 +145,8 @@ export function CodeMirrorMerge({
     return () => {
       mergeView.destroy()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resolvedTheme])
+  }, [baseExtensions])
 
-  // Update content when props change externally
   useEffect(() => {
     if (!mergeViewRef.current)
       return

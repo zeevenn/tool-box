@@ -15,4 +15,38 @@ export const navigationItems: NavItem[] = [
     shortLabel: 'Image',
     path: '/image',
   },
+  {
+    label: 'JSON',
+    path: '/json',
+  },
+  {
+    label: 'Base64',
+    path: '/base64',
+  },
+  {
+    label: 'URL Encode',
+    shortLabel: 'URL',
+    path: '/url-encode',
+  },
+  {
+    label: 'Hash',
+    path: '/hash',
+  },
+  {
+    label: 'Regex',
+    path: '/regex',
+  },
+  {
+    label: 'Timestamp',
+    shortLabel: 'Time',
+    path: '/timestamp',
+  },
+  {
+    label: 'JWT',
+    path: '/jwt',
+  },
+  {
+    label: 'Color',
+    path: '/color',
+  },
 ]

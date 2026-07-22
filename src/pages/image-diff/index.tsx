@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -42,6 +43,8 @@ export function ImageDiff() {
   )
   const [sliderPosition, setSliderPosition] = useState(50)
   const [overlayOpacity, setOverlayOpacity] = useState(50)
+  const originalInputRef = useRef<HTMLInputElement>(null)
+  const modifiedInputRef = useRef<HTMLInputElement>(null)
 
   const getImageInfo = (
     file: File,
@@ -67,8 +70,7 @@ export function ImageDiff() {
   const handleOriginalImageSelect = async (files: FileList) => {
     const file = files[0]
     if (!file.type.startsWith('image/')) {
-      // eslint-disable-next-line no-alert
-      alert('Please select an image file')
+      toast.error('Please select an image file')
       return
     }
 
@@ -85,8 +87,7 @@ export function ImageDiff() {
   const handleModifiedImageSelect = async (files: FileList) => {
     const file = files[0]
     if (!file.type.startsWith('image/')) {
-      // eslint-disable-next-line no-alert
-      alert('Please select an image file')
+      toast.error('Please select an image file')
       return
     }
 
@@ -216,9 +217,43 @@ export function ImageDiff() {
               </div>
             </div>
 
-            <Button onClick={clearImages} size="sm" variant="secondary">
-              Clear
-            </Button>
+            <div className="flex items-center gap-2">
+              {comparisonMode !== COMPARISON_MODES.SIDE_BY_SIDE && (
+                <>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => originalInputRef.current?.click()}
+                  >
+                    Change Original
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => modifiedInputRef.current?.click()}
+                  >
+                    Change Modified
+                  </Button>
+                  <input
+                    ref={originalInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={e => e.target.files && handleOriginalImageSelect(e.target.files)}
+                  />
+                  <input
+                    ref={modifiedInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={e => e.target.files && handleModifiedImageSelect(e.target.files)}
+                  />
+                </>
+              )}
+              <Button onClick={clearImages} size="sm" variant="secondary">
+                Clear
+              </Button>
+            </div>
           </CardHeader>
           <Separator />
         </>
