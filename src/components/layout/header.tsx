@@ -1,15 +1,22 @@
 import { SiGithub } from '@icons-pack/react-simple-icons'
-import { Menu, Moon, Sun, SunMoon, X } from 'lucide-react'
-import { useState } from 'react'
+import { Menu, Monitor, Moon, Sparkles, Sun } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
 
-import { navigationItems } from '@/config/navigation'
+import { navigationGroups, navigationItems } from '@/config/navigation'
 import { useTheme } from '@/context/theme-provider'
 import { cn } from '@/lib/utils'
 
 import { Logo } from '../common/logo'
 import { Button } from '../ui/button'
-import { Typography } from '../ui/typography'
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '../ui/sheet'
 
 interface HeaderProps {
   className?: string
@@ -17,154 +24,137 @@ interface HeaderProps {
 
 type ThemeCycle = 'light' | 'dark' | 'system'
 const THEME_CYCLE: ThemeCycle[] = ['light', 'dark', 'system']
-const THEME_ICONS: Record<ThemeCycle, React.ReactNode> = {
-  light: <Sun className="w-4 h-4" />,
-  dark: <Moon className="w-4 h-4" />,
-  system: <SunMoon className="w-4 h-4" />,
+const THEME_ICONS = {
+  light: Sun,
+  dark: Moon,
+  system: Monitor,
+} satisfies Record<ThemeCycle, typeof Sun>
+
+function Brand() {
+  return (
+    <Link to="/" className="flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <span className="grid size-10 place-items-center rounded-lg border border-border/70 bg-card shadow-sm">
+        <Logo className="size-6" />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-[15px] font-semibold tracking-[-0.02em]">Tool Box</span>
+        <span className="block text-xs text-muted-foreground">Utility workspace</span>
+      </span>
+    </Link>
+  )
 }
 
-export function Header({ className = '' }: HeaderProps) {
+function Navigation({ mobile = false }: { mobile?: boolean }) {
   const location = useLocation()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  return (
+    <nav className="flex flex-col gap-6" aria-label="Tools">
+      {navigationGroups.map(group => (
+        <div key={group} className="flex flex-col gap-1">
+          <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">
+            {group}
+          </p>
+          {navigationItems.filter(item => item.group === group).map((item) => {
+            const Icon = item.icon
+            const active = location.pathname === item.path
+            const link = (
+              <Link
+                to={item.path}
+                className={cn(
+                  'group flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-all duration-200',
+                  active
+                    ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                )}
+              >
+                <Icon className={cn('size-4 transition-transform group-hover:scale-105', !active && 'text-muted-foreground')} />
+                <span className="truncate">{item.label}</span>
+                {active && <span className="ml-auto size-1.5 rounded-full bg-primary-foreground/80" />}
+              </Link>
+            )
+
+            return mobile
+              ? <SheetClose key={item.path} asChild>{link}</SheetClose>
+              : <div key={item.path}>{link}</div>
+          })}
+        </div>
+      ))}
+    </nav>
+  )
+}
+
+export function Header({ className }: HeaderProps) {
   const { theme, setTheme } = useTheme()
-  const isActive = (path: string) => location.pathname === path
+  const currentTheme = theme as ThemeCycle
+  const ThemeIcon = THEME_ICONS[currentTheme] ?? Monitor
 
   const cycleTheme = () => {
-    const current = THEME_CYCLE.indexOf(theme as ThemeCycle)
+    const current = THEME_CYCLE.indexOf(currentTheme)
     setTheme(THEME_CYCLE[(current + 1) % THEME_CYCLE.length])
-  }
-
-  const handleLinkClick = () => {
-    setMobileMenuOpen(false)
   }
 
   return (
     <>
-      <header
-        className={`bg-background border-b border-border shadow-sm relative z-50 ${className}`}
-      >
-        <div className="mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4 md:space-x-6">
-              {/* Logo */}
-              <Link to="/" className="flex-shrink-0 flex items-center space-x-2 sm:space-x-3">
-                <Logo className="w-8 h-8 sm:w-10 sm:h-10" />
-                <Typography variant="h4" className="text-foreground text-base sm:text-xl">
-                  Tool Box
-                </Typography>
-              </Link>
+      <aside className={cn('hidden h-screen w-[248px] shrink-0 flex-col border-r border-sidebar-border bg-sidebar/90 px-3 py-4 backdrop-blur-xl lg:flex', className)}>
+        <div className="px-2 pb-7">
+          <Brand />
+        </div>
 
-              {/* Desktop Navigation */}
-              <nav className="hidden md:flex space-x-1">
-                {navigationItems.map((item) => {
-                  return (
-                    <Button
-                      key={item.path}
-                      variant={isActive(item.path) ? 'secondary' : 'ghost'}
-                      size="sm"
-                      asChild
-                    >
-                      <Link to={item.path} className="gap-2">
-                        {item.label}
-                      </Link>
-                    </Button>
-                  )
-                })}
-              </nav>
-            </div>
+        <div className="sidebar-scroll min-h-0 flex-1 overflow-y-auto px-1">
+          <Navigation />
+        </div>
 
-            {/* Actions */}
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={cycleTheme} title={`Theme: ${theme}`}>
-                {THEME_ICONS[theme as ThemeCycle] ?? <SunMoon className="w-4 h-4" />}
-              </Button>
-
-              <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
-                <a
-                  href="https://github.com/zeevenn/tool-box"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="View on GitHub"
-                >
-                  <SiGithub />
-                  <span className="hidden sm:inline">GitHub</span>
-                </a>
-              </Button>
-
-              {/* Mobile GitHub Link (icon only) */}
-              <Button variant="ghost" size="sm" asChild className="sm:hidden">
-                <a
-                  href="https://github.com/zeevenn/tool-box"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="View on GitHub"
-                >
-                  <SiGithub className="w-4 h-4" />
-                </a>
-              </Button>
-
-              {/* Mobile Menu Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="md:hidden"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="Toggle menu"
-              >
-                {mobileMenuOpen
-                  ? (
-                      <X className="w-5 h-5" />
-                    )
-                  : (
-                      <Menu className="w-5 h-5" />
-                    )}
-              </Button>
+        <div className="mt-4 flex flex-col gap-3 border-t border-sidebar-border px-1 pt-4">
+          <div className="flex items-center gap-2 rounded-lg bg-accent/60 px-3 py-2.5">
+            <span className="grid size-7 place-items-center rounded-lg bg-primary/10 text-primary">
+              <Sparkles className="size-3.5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium">Private by default</p>
+              <p className="text-[11px] text-muted-foreground">Processed in your browser</p>
             </div>
           </div>
-        </div>
 
-        {/* Mobile Dropdown Menu */}
-        <div
-          className={cn(
-            'absolute left-0 right-0 md:hidden overflow-hidden bg-background border-b border-border shadow-lg',
-            'transition-all duration-200 ease-out',
-            mobileMenuOpen
-              ? 'max-h-96 opacity-100 translate-y-0'
-              : 'max-h-0 opacity-0 -translate-y-2 border-b-0',
-          )}
-        >
-          <nav className={cn(
-            'px-4 py-2 space-y-1 transition-opacity duration-150',
-            mobileMenuOpen ? 'opacity-100 delay-75' : 'opacity-0',
-          )}
-          >
-            {navigationItems.map((item) => {
-              return (
-                <Button
-                  key={item.path}
-                  variant={isActive(item.path) ? 'secondary' : 'ghost'}
-                  size="lg"
-                  asChild
-                  className="w-full justify-center h-12"
-                >
-                  <Link to={item.path} onClick={handleLinkClick}>
-                    {item.label}
-                  </Link>
-                </Button>
-              )
-            })}
-          </nav>
+          <div className="flex items-center justify-between gap-1">
+            <Button variant="ghost" size="sm" className="cursor-pointer justify-start [&_svg]:!size-4" onClick={cycleTheme} title={`Theme: ${theme}`}>
+              <ThemeIcon data-icon="inline-start" />
+              <span className="capitalize">{theme}</span>
+            </Button>
+            <Button variant="ghost" size="icon-sm" className="cursor-pointer [&_svg]:!size-4" asChild>
+              <a href="https://github.com/zeevenn/tool-box" target="_blank" rel="noopener noreferrer" title="View on GitHub">
+                <SiGithub data-icon="inline-start" />
+                <span className="sr-only">GitHub</span>
+              </a>
+            </Button>
+          </div>
+        </div>
+      </aside>
+
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-border/70 bg-background/85 px-4 backdrop-blur-xl lg:hidden">
+        <Brand />
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon-sm" className="cursor-pointer [&_svg]:!size-4" onClick={cycleTheme} title={`Theme: ${theme}`}>
+            <ThemeIcon data-icon="inline-start" />
+            <span className="sr-only">Cycle theme</span>
+          </Button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon-sm" aria-label="Open navigation">
+                <Menu data-icon="inline-start" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[300px] gap-0 p-0">
+              <SheetHeader className="border-b border-border p-5 text-left">
+                <SheetTitle>Tool Box</SheetTitle>
+                <SheetDescription>Choose a utility to open.</SheetDescription>
+              </SheetHeader>
+              <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                <Navigation mobile />
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </header>
-
-      {/* Overlay */}
-      <div
-        className={cn(
-          'fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-200',
-          mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none',
-        )}
-        onClick={() => setMobileMenuOpen(false)}
-      />
     </>
   )
 }

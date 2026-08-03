@@ -24,8 +24,8 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Toaster position="top-center" richColors theme={resolvedTheme} />
       <Layout>
-        <Toaster position="top-center" richColors theme={resolvedTheme} />
         <Routes>
           <Route path="/" element={<TextDiff />} />
           <Route path="/image" element={<ImageDiff />} />

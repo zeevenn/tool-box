@@ -184,17 +184,19 @@ function DropZoneMessage({
   className = '',
 }: DropZoneMessageProps) {
   const defaultIcon = (
-    <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
+    <span className="mx-auto mb-4 grid size-12 place-items-center rounded-2xl border border-border bg-card text-primary shadow-sm">
+      <Upload className="size-[18px]" />
+    </span>
   )
 
   return (
-    <div className={`text-center ${className}`}>
+    <div className={`px-6 text-center ${className}`}>
       {icon || defaultIcon}
-      <div className="mt-2">
+      <div>
         <Typography variant="small" className="text-foreground">
           {title}
         </Typography>
-        <Typography variant="muted" className="mt-1">
+        <Typography variant="muted" className="mt-1 text-xs">
           {description}
         </Typography>
       </div>

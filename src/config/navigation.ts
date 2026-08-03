@@ -1,7 +1,26 @@
+import type { LucideIcon } from 'lucide-react'
+import {
+  Binary,
+  Braces,
+  Clock3,
+  FileKey2,
+  Fingerprint,
+  ImageIcon,
+  Link2,
+  Palette,
+  Regex,
+  TextSelect,
+} from 'lucide-react'
+
+export type NavGroup = 'Compare' | 'Transform' | 'Inspect'
+
 export interface NavItem {
   label: string
   path: string
-  shortLabel?: string // 用于移动端显示的短标签
+  shortLabel?: string
+  description: string
+  group: NavGroup
+  icon: LucideIcon
 }
 
 export const navigationItems: NavItem[] = [
@@ -9,44 +28,85 @@ export const navigationItems: NavItem[] = [
     label: 'Text Diff',
     shortLabel: 'Text',
     path: '/',
+    description: 'Compare two text or code versions side by side.',
+    group: 'Compare',
+    icon: TextSelect,
   },
   {
     label: 'Image Diff',
     shortLabel: 'Image',
     path: '/image',
+    description: 'Inspect visual changes with multiple comparison modes.',
+    group: 'Compare',
+    icon: ImageIcon,
   },
   {
-    label: 'JSON',
+    label: 'JSON Formatter',
+    shortLabel: 'JSON',
     path: '/json',
+    description: 'Format, minify, and validate JSON instantly.',
+    group: 'Transform',
+    icon: Braces,
   },
   {
     label: 'Base64',
     path: '/base64',
+    description: 'Encode text and images or decode Base64 data.',
+    group: 'Transform',
+    icon: Binary,
   },
   {
     label: 'URL Encode',
     shortLabel: 'URL',
     path: '/url-encode',
+    description: 'Encode and decode URL-safe strings in real time.',
+    group: 'Transform',
+    icon: Link2,
   },
   {
-    label: 'Hash',
+    label: 'Hash Generator',
+    shortLabel: 'Hash',
     path: '/hash',
+    description: 'Generate common cryptographic hashes locally.',
+    group: 'Transform',
+    icon: Fingerprint,
   },
   {
-    label: 'Regex',
+    label: 'Regex Tester',
+    shortLabel: 'Regex',
     path: '/regex',
+    description: 'Test regular expressions and inspect every match.',
+    group: 'Inspect',
+    icon: Regex,
   },
   {
     label: 'Timestamp',
     shortLabel: 'Time',
     path: '/timestamp',
+    description: 'Convert Unix timestamps and readable dates.',
+    group: 'Inspect',
+    icon: Clock3,
   },
   {
-    label: 'JWT',
+    label: 'JWT Decoder',
+    shortLabel: 'JWT',
     path: '/jwt',
+    description: 'Inspect JWT headers, payloads, and expiration.',
+    group: 'Inspect',
+    icon: FileKey2,
   },
   {
-    label: 'Color',
+    label: 'Color Converter',
+    shortLabel: 'Color',
     path: '/color',
+    description: 'Convert HEX, RGB, and HSL color values.',
+    group: 'Inspect',
+    icon: Palette,
   },
 ]
+
+export const navigationGroups: NavGroup[] = ['Compare', 'Transform', 'Inspect']
+
+export function getNavigationItem(pathname: string) {
+  return navigationItems.find(item => item.path === pathname)
+}

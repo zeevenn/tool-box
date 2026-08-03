@@ -108,25 +108,25 @@ export function JsonFormatter() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-background shrink-0 flex-wrap">
+      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border/70 bg-card/80 px-4 py-2.5">
         <Button size="sm" onClick={format}>
-          <WrapText className="w-4 h-4" />
+          <WrapText data-icon="inline-start" />
           Format
         </Button>
         <Button size="sm" variant="outline" onClick={minify}>
-          <Minimize2 className="w-4 h-4" />
+          <Minimize2 data-icon="inline-start" />
           Minify
         </Button>
         <Button size="sm" variant="outline" onClick={validate}>
-          <RefreshCw className="w-4 h-4" />
+          <RefreshCw data-icon="inline-start" />
           Validate
         </Button>
         <Button size="sm" variant="outline" onClick={copy}>
-          <Copy className="w-4 h-4" />
+          <Copy data-icon="inline-start" />
           Copy
         </Button>
 
-        <Separator orientation="vertical" className="h-5" />
+        <Separator orientation="vertical" className="hidden !h-5 sm:block" />
 
         <div className="flex items-center gap-2">
           <Typography variant="muted" className="text-xs">Indent:</Typography>
@@ -135,7 +135,7 @@ export function JsonFormatter() {
               key={n}
               size="sm"
               variant={indentSize === n ? 'secondary' : 'ghost'}
-              className="w-8 h-8 p-0"
+              className="size-8 p-0"
               onClick={() => setIndentSize(n)}
             >
               {n}
@@ -145,10 +145,10 @@ export function JsonFormatter() {
       </div>
 
       {/* Editors */}
-      <div className="flex-1 flex overflow-hidden">
-        <div className="flex-1 flex flex-col border-r border-border">
-          <div className="px-3 py-1.5 border-b border-border bg-muted/40">
-            <Typography variant="muted" className="text-xs">Input</Typography>
+      <div className="flex flex-1 flex-col overflow-hidden md:flex-row">
+        <div className="flex min-h-0 flex-1 flex-col border-b border-border/70 md:border-r md:border-b-0">
+          <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
+            <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Input</Typography>
           </div>
           <div className="relative flex-1 overflow-hidden">
             <CodeMirrorEditor
@@ -161,9 +161,9 @@ export function JsonFormatter() {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col">
-          <div className="px-3 py-1.5 border-b border-border bg-muted/40">
-            <Typography variant="muted" className="text-xs">Output</Typography>
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
+            <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Output</Typography>
           </div>
           {error
             ? (

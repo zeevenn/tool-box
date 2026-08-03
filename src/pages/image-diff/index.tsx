@@ -158,12 +158,12 @@ export function ImageDiff() {
   }
 
   return (
-    <Card className="flex-1 flex flex-col py-0 gap-0">
+    <Card className="flex flex-1 flex-col gap-0 rounded-none border-0 bg-transparent py-0 shadow-none">
       {/* Toolbar */}
       {originalImageInfo && modifiedImageInfo && (
         <>
-          <CardHeader className="flex-row items-center justify-between px-4 py-3">
-            <div className="flex items-center gap-4">
+          <CardHeader className="flex-row flex-wrap items-center justify-between gap-3 px-4 py-3">
+            <div className="flex flex-wrap items-center gap-3">
               {/* Comparison Mode Selector */}
               <div className="flex items-center gap-2">
                 <Typography variant="muted">Mode:</Typography>
@@ -195,7 +195,7 @@ export function ImageDiff() {
               <Separator orientation="vertical" className="h-4" />
 
               {/* Image Info */}
-              <div className="flex items-center gap-4">
+              <div className="hidden items-center gap-4 lg:flex">
                 {originalImageInfo && (
                   <Typography variant="muted">
                     Original:

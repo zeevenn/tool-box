@@ -87,20 +87,20 @@ export function TimestampConverter() {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden p-4 gap-4">
+    <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-4 sm:p-6">
       {/* Current timestamp */}
-      <div className="flex items-center gap-3 p-4 rounded-lg border border-border bg-muted/30">
+      <div className="flex items-center gap-3 rounded-2xl border border-primary/15 bg-primary/6 p-4 sm:p-5">
         <div>
           <Typography variant="muted" className="text-xs mb-1">Current Unix Timestamp (seconds)</Typography>
-          <Typography className="font-mono text-2xl font-semibold">{now}</Typography>
+          <Typography className="font-mono text-2xl font-semibold tracking-tight sm:text-3xl">{now}</Typography>
         </div>
         <div className="ml-auto flex gap-2">
           <Button size="sm" variant="outline" onClick={applyNow}>
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw data-icon="inline-start" />
             Use Now
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => copy(String(now))}>
-            <Copy className="w-4 h-4" />
+          <Button size="icon-sm" variant="ghost" onClick={() => copy(String(now))}>
+            <Copy data-icon="inline-start" />
           </Button>
         </div>
       </div>
@@ -112,7 +112,7 @@ export function TimestampConverter() {
           value={input}
           onChange={e => parse(e.target.value)}
           placeholder="e.g. 1700000000 or 2024-01-01T00:00:00Z"
-          className="w-full border border-border rounded-md px-3 py-2 font-mono text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="w-full rounded-xl border border-input bg-background/60 px-4 py-3 font-mono text-sm shadow-xs outline-none transition focus:border-ring focus:ring-3 focus:ring-ring/20"
         />
         {error && <Typography variant="small" className="text-destructive">{error}</Typography>}
       </div>
@@ -131,13 +131,13 @@ export function TimestampConverter() {
               ['Unix (ms)', String(new Date(parsed.iso).getTime())],
             ] as [string, string][]
           ).map(([label, value]) => (
-            <div key={label} className="flex items-center justify-between px-4 py-3 rounded-lg border border-border">
+            <div key={label} className="flex items-center justify-between rounded-xl border border-border/70 bg-muted/20 px-4 py-3.5 transition-colors hover:bg-muted/35">
               <div>
                 <Typography variant="muted" className="text-xs mb-0.5">{label}</Typography>
                 <Typography className="font-mono text-sm">{value}</Typography>
               </div>
               <Button size="sm" variant="ghost" onClick={() => copy(value)}>
-                <Copy className="w-4 h-4" />
+                <Copy data-icon="inline-start" />
               </Button>
             </div>
           ))}

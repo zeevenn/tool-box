@@ -46,21 +46,21 @@ export function UrlEncode() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-background shrink-0">
+      <div className="flex shrink-0 items-center gap-2 border-b border-border/70 bg-card/80 px-4 py-2.5">
         <Button size="sm" variant="ghost" onClick={clear}>
-          <Trash2 className="w-4 h-4" />
+          <Trash2 data-icon="inline-start" />
           Clear
         </Button>
         <Typography variant="muted" className="text-xs ml-auto">Converts in real-time</Typography>
       </div>
 
       {/* Panels */}
-      <div className="flex-1 flex overflow-hidden">
-        <div className="flex-1 flex flex-col border-r border-border">
-          <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-muted/40">
-            <Typography variant="muted" className="text-xs">Decoded (Plain URL)</Typography>
-            <Button size="sm" variant="ghost" className="h-6 px-2" onClick={() => copy(decoded, 'Decoded')}>
-              <Copy className="w-3 h-3" />
+      <div className="flex flex-1 flex-col overflow-hidden md:flex-row">
+        <div className="flex min-h-0 flex-1 flex-col border-b border-border/70 md:border-r md:border-b-0">
+          <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
+            <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Decoded URL</Typography>
+            <Button size="icon-xs" variant="ghost" onClick={() => copy(decoded, 'Decoded')}>
+              <Copy data-icon="inline-start" />
             </Button>
           </div>
           <textarea
@@ -68,15 +68,15 @@ export function UrlEncode() {
             onChange={e => handleDecodedChange(e.target.value)}
             placeholder="https://example.com/path?q=hello world&lang=中文"
             spellCheck={false}
-            className="flex-1 resize-none p-3 font-mono text-sm bg-background focus:outline-none"
+            className="flex-1 resize-none bg-card p-4 font-mono text-sm leading-6 focus:outline-none"
           />
         </div>
 
-        <div className="flex-1 flex flex-col">
-          <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-muted/40">
-            <Typography variant="muted" className="text-xs">Encoded</Typography>
-            <Button size="sm" variant="ghost" className="h-6 px-2" onClick={() => copy(encoded, 'Encoded')}>
-              <Copy className="w-3 h-3" />
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
+            <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Encoded URL</Typography>
+            <Button size="icon-xs" variant="ghost" onClick={() => copy(encoded, 'Encoded')}>
+              <Copy data-icon="inline-start" />
             </Button>
           </div>
           <textarea
@@ -84,7 +84,7 @@ export function UrlEncode() {
             onChange={e => handleEncodedChange(e.target.value)}
             placeholder="https%3A%2F%2Fexample.com%2Fpath%3Fq%3Dhello%20world%26lang%3D%E4%B8%AD%E6%96%87"
             spellCheck={false}
-            className="flex-1 resize-none p-3 font-mono text-sm bg-background focus:outline-none"
+            className="flex-1 resize-none bg-card p-4 font-mono text-sm leading-6 focus:outline-none"
           />
         </div>
       </div>

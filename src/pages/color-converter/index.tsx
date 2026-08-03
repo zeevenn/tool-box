@@ -146,11 +146,12 @@ export function ColorConverter() {
   ]
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden p-4 gap-6">
+    <div className="flex flex-1 flex-col gap-7 overflow-y-auto p-4 sm:p-6">
       {/* Color Preview + Picker */}
-      <div className="flex items-center gap-4">
-        <div
-          className="w-20 h-20 rounded-xl border border-border shadow-inner cursor-pointer shrink-0"
+      <div className="flex items-center gap-4 rounded-2xl border border-border/70 bg-muted/20 p-4 sm:p-5">
+        <button
+          type="button"
+          className="size-20 shrink-0 cursor-pointer rounded-2xl border border-border shadow-inner ring-offset-background transition hover:scale-[1.03] focus:outline-none focus:ring-3 focus:ring-ring/30"
           style={{ backgroundColor: previewColor }}
           onClick={() => pickerRef.current?.click()}
           title="Click to open color picker"
@@ -175,7 +176,7 @@ export function ColorConverter() {
             )
           </Typography>
         </div>
-        <Button size="sm" variant="outline" className="ml-auto" onClick={() => pickerRef.current?.click()}>
+        <Button size="sm" variant="outline" className="ml-auto hidden sm:inline-flex" onClick={() => pickerRef.current?.click()}>
           Pick Color
         </Button>
       </div>
@@ -183,17 +184,17 @@ export function ColorConverter() {
       {/* Input fields */}
       <div className="flex flex-col gap-3">
         {fields.map(({ label, value, onChange, placeholder }) => (
-          <div key={label} className="flex items-center gap-3">
+          <div key={label} className="flex items-center gap-3 rounded-xl border border-border/70 bg-muted/15 p-2 pl-4">
             <Typography variant="muted" className="text-xs w-10 shrink-0">{label}</Typography>
             <input
               value={value}
               onChange={e => onChange(e.target.value)}
               placeholder={placeholder}
               spellCheck={false}
-              className="flex-1 border border-border rounded-md px-3 py-2 font-mono text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+              className="min-w-0 flex-1 border-0 bg-transparent px-2 py-2 font-mono text-sm outline-none"
             />
             <Button size="sm" variant="ghost" className="shrink-0" onClick={() => copy(value, label)}>
-              <Copy className="w-4 h-4" />
+              <Copy data-icon="inline-start" />
             </Button>
           </div>
         ))}
@@ -219,7 +220,7 @@ export function ColorConverter() {
           ].map(color => (
             <button
               key={color}
-              className="w-8 h-8 rounded-md border border-border hover:scale-110 transition-transform shadow-sm"
+              className="size-9 rounded-xl border border-border shadow-sm transition-transform hover:scale-110 focus:outline-none focus:ring-3 focus:ring-ring/30"
               style={{ backgroundColor: color }}
               onClick={() => updateFromHex(color)}
               title={color}

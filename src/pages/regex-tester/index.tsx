@@ -89,7 +89,7 @@ export function RegexTester() {
         parts.push(<span key={`t-${cursor}`}>{testText.slice(cursor, m.index)}</span>)
       }
       parts.push(
-        <mark key={`m-${m.index}`} className="bg-yellow-200 dark:bg-yellow-800 rounded-sm px-0.5">
+        <mark key={`m-${m.index}`} className="rounded-sm bg-primary/20 px-0.5 text-foreground">
           {testText.slice(m.index, m.index + m.length)}
         </mark>,
       )
@@ -109,26 +109,26 @@ export function RegexTester() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Regex input */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-background shrink-0 flex-wrap">
+      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border/70 bg-card/80 px-4 py-2.5">
         <Typography variant="muted" className="text-xs font-mono">/</Typography>
         <input
           value={pattern}
           onChange={e => setPattern(e.target.value)}
           placeholder="pattern"
           spellCheck={false}
-          className="flex-1 min-w-0 font-mono text-sm bg-background focus:outline-none px-1"
+          className="min-w-[140px] flex-1 bg-transparent px-1 font-mono text-sm outline-none"
         />
         <Typography variant="muted" className="text-xs font-mono">/</Typography>
 
-        <Separator orientation="vertical" className="h-5" />
+        <Separator orientation="vertical" className="hidden !h-5 sm:block" />
 
         <div className="flex items-center gap-1">
           {FLAG_OPTIONS.map(flag => (
             <Button
               key={flag}
-              size="sm"
+              size="xs"
               variant={flags.has(flag) ? 'secondary' : 'ghost'}
-              className="w-7 h-7 p-0 font-mono text-xs"
+              className="size-7 p-0 font-mono text-xs"
               onClick={() => toggleFlag(flag)}
             >
               {flag}
@@ -136,14 +136,14 @@ export function RegexTester() {
           ))}
         </div>
 
-        <Separator orientation="vertical" className="h-5" />
+        <Separator orientation="vertical" className="hidden !h-5 sm:block" />
 
         <div className="flex items-center gap-2">
           {error
             ? <Typography variant="small" className="text-destructive">{error}</Typography>
             : pattern
               ? (
-                  <Typography variant="small" className={matches.length > 0 ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}>
+                  <Typography variant="small" className={matches.length > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'}>
                     {matches.length}
                     {' '}
                     match
@@ -154,13 +154,13 @@ export function RegexTester() {
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden md:flex-row">
         {/* Test text */}
-        <div className="flex-1 flex flex-col">
-          <div className="flex items-center justify-between px-3 py-1.5 border-b border-border bg-muted/40">
-            <Typography variant="muted" className="text-xs">Test Text</Typography>
-            <Button size="sm" variant="ghost" className="h-6" onClick={() => setTestText('')}>
-              <Trash2 className="w-3 h-3" />
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
+            <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Test text</Typography>
+            <Button size="icon-xs" variant="ghost" onClick={() => setTestText('')}>
+              <Trash2 data-icon="inline-start" />
             </Button>
           </div>
           <div className="relative flex-1">
@@ -169,9 +169,9 @@ export function RegexTester() {
               onChange={e => setTestText(e.target.value)}
               placeholder="Enter text to test..."
               spellCheck={false}
-              className="absolute inset-0 resize-none p-3 font-mono text-sm bg-transparent focus:outline-none text-transparent caret-foreground"
+              className="absolute inset-0 resize-none bg-transparent p-4 font-mono text-sm leading-6 text-transparent caret-foreground outline-none"
             />
-            <pre className="absolute inset-0 p-3 font-mono text-sm whitespace-pre-wrap break-words pointer-events-none overflow-hidden">
+            <pre className="pointer-events-none absolute inset-0 overflow-hidden whitespace-pre-wrap break-words p-4 font-mono text-sm leading-6">
               {renderHighlighted()}
             </pre>
           </div>
@@ -180,14 +180,14 @@ export function RegexTester() {
         {/* Match list */}
         {matches.length > 0 && (
           <>
-            <Separator orientation="vertical" />
-            <div className="w-64 flex flex-col overflow-hidden">
-              <div className="px-3 py-1.5 border-b border-border bg-muted/40">
-                <Typography variant="muted" className="text-xs">Matches</Typography>
+            <Separator orientation="vertical" className="hidden md:block" />
+            <div className="flex max-h-48 w-full flex-col overflow-hidden border-t border-border/70 md:max-h-none md:w-72 md:border-t-0">
+              <div className="border-b border-border/70 bg-muted/35 px-4 py-2">
+                <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Matches</Typography>
               </div>
               <div className="flex-1 overflow-y-auto">
                 {matches.map((m, i) => (
-                  <div key={`${m.index}-${m.value}`} className="px-3 py-2 border-b border-border last:border-0">
+                  <div key={`${m.index}-${m.value}`} className="border-b border-border/70 px-4 py-3 last:border-0 hover:bg-muted/25">
                     <div className="flex items-center justify-between">
                       <Typography variant="muted" className="text-xs">
                         #
@@ -196,8 +196,8 @@ export function RegexTester() {
                         @
                         {m.index}
                       </Typography>
-                      <Button size="sm" variant="ghost" className="h-5 px-1" onClick={() => copy(m.value)}>
-                        <Copy className="w-3 h-3" />
+                      <Button size="icon-xs" variant="ghost" onClick={() => copy(m.value)}>
+                        <Copy data-icon="inline-start" />
                       </Button>
                     </div>
                     <Typography className="font-mono text-sm truncate">{m.value}</Typography>

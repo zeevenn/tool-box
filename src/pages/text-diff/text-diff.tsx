@@ -217,11 +217,11 @@ export function TextDiff() {
   const langExtension = getLanguageExtension(language)
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-background shrink-0 flex-wrap">
+      <div className="flex shrink-0 flex-wrap items-center gap-1.5 border-b border-border/70 bg-card/80 px-3 py-2.5 sm:gap-2 sm:px-4">
         <Select value={language} onValueChange={v => setLanguage(v as Language)}>
-          <SelectTrigger className="w-[140px] h-8">
+          <SelectTrigger size="sm" className="w-[140px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -231,39 +231,39 @@ export function TextDiff() {
           </SelectContent>
         </Select>
 
-        <Separator orientation="vertical" className="h-5" />
+        <Separator orientation="vertical" className="hidden !h-5 sm:block" />
 
         <Button variant="ghost" size="sm" onClick={handleSwap} title="Swap original and modified">
-          <ArrowLeftRight className="w-4 h-4" />
+          <ArrowLeftRight data-icon="inline-start" />
           <span className="hidden sm:inline">Swap</span>
         </Button>
 
         <Button variant="ghost" size="sm" onClick={handleCopyDiff} title="Copy diff">
-          <Copy className="w-4 h-4" />
+          <Copy data-icon="inline-start" />
           <span className="hidden sm:inline">Copy Diff</span>
         </Button>
 
         <Button variant="ghost" size="sm" onClick={handleClear} title="Clear both sides">
-          <Trash2 className="w-4 h-4" />
+          <Trash2 data-icon="inline-start" />
           <span className="hidden sm:inline">Clear</span>
         </Button>
 
         <Button variant="ghost" size="sm" onClick={handleShare} title="Copy share link">
-          <Share2 className="w-4 h-4" />
+          <Share2 data-icon="inline-start" />
           <span className="hidden sm:inline">Share</span>
         </Button>
 
-        <Separator orientation="vertical" className="h-5" />
+        <Separator orientation="vertical" className="hidden !h-5 sm:block" />
 
         <div className="flex items-center gap-2">
           {stats.added > 0 && (
-            <Typography variant="small" className="text-green-600 dark:text-green-400 font-mono">
+            <Typography variant="small" className="font-mono text-emerald-600 dark:text-emerald-400">
               +
               {stats.added}
             </Typography>
           )}
           {stats.removed > 0 && (
-            <Typography variant="small" className="text-red-600 dark:text-red-400 font-mono">
+            <Typography variant="small" className="font-mono text-destructive">
               -
               {stats.removed}
             </Typography>
@@ -275,7 +275,7 @@ export function TextDiff() {
       </div>
 
       {/* Editor */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className="relative flex-1 overflow-hidden bg-card">
         <CodeMirrorMerge
           originalValue={originalText}
           modifiedValue={modifiedText}
@@ -293,7 +293,7 @@ export function TextDiff() {
             <div className="flex items-center justify-center h-full">
               <div className="bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg">
                 <div className="flex items-center gap-2">
-                  <CloudUpload className="size-5" />
+                  <CloudUpload className="size-[18px]" />
                   <Typography variant="small">
                     Drag to update original content
                   </Typography>
@@ -309,7 +309,7 @@ export function TextDiff() {
             <div className="flex items-center justify-center h-full">
               <div className="bg-accent text-accent-foreground px-4 py-2 rounded-lg shadow-lg">
                 <div className="flex items-center gap-2">
-                  <CloudUpload className="size-5" />
+                  <CloudUpload className="size-[18px]" />
                   <Typography variant="small">
                     Drag to update modified content
                   </Typography>

@@ -179,14 +179,14 @@ export function HashGenerator() {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden p-4 gap-4">
+    <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-4 sm:p-6">
       {/* Input */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <Typography variant="muted" className="text-xs">Input Text</Typography>
+          <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Input text</Typography>
           {/* eslint-disable-next-line style/max-statements-per-line */}
           <Button size="sm" variant="ghost" className="h-6" onClick={() => { setInput(''); void generate('') }}>
-            <RefreshCw className="w-3 h-3" />
+            <RefreshCw data-icon="inline-start" />
             Clear
           </Button>
         </div>
@@ -196,14 +196,14 @@ export function HashGenerator() {
           placeholder="Enter text to hash..."
           rows={4}
           spellCheck={false}
-          className="resize-none border border-border rounded-md p-3 font-mono text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="resize-none rounded-xl border border-input bg-background/60 p-4 font-mono text-sm leading-6 shadow-inner outline-none transition focus:border-ring focus:ring-3 focus:ring-ring/20"
         />
       </div>
 
       {/* Results */}
       <div className="flex flex-col gap-2">
         {results.map(({ algorithm, value, loading }) => (
-          <div key={algorithm} className="flex items-center justify-between px-4 py-3 rounded-lg border border-border">
+          <div key={algorithm} className="flex items-center justify-between rounded-xl border border-border/70 bg-muted/20 px-4 py-3.5 transition-colors hover:bg-muted/35">
             <div className="flex-1 min-w-0">
               <Typography variant="muted" className="text-xs mb-0.5">{algorithm}</Typography>
               <Typography className="font-mono text-sm truncate text-foreground/80">
@@ -216,7 +216,7 @@ export function HashGenerator() {
               disabled={!value}
               onClick={() => copy(value, algorithm)}
             >
-              <Copy className="w-4 h-4" />
+              <Copy data-icon="inline-start" />
             </Button>
           </div>
         ))}

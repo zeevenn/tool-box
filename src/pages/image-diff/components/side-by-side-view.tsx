@@ -15,7 +15,7 @@ export function SideBySideView({
   onModifiedImageSelect,
 }: SideBySideViewProps) {
   return (
-    <div className="flex-1 flex gap-2 p-4">
+    <div className="flex flex-1 flex-col gap-3 p-3 sm:p-4 md:flex-row">
       {/* Original Image */}
       <DropZone
         onFilesSelect={(files: FileList) => onOriginalImageSelect(files)}
@@ -23,12 +23,12 @@ export function SideBySideView({
         className="flex-1"
       >
         <DropZone.Content
-          className={`flex-1 flex items-center justify-center rounded-lg ${!originalImage ? 'border-2 border-dashed border-border' : ''
+          className={`flex-1 flex items-center justify-center rounded-xl bg-muted/25 transition-colors ${!originalImage ? 'border border-dashed border-border hover:border-primary/45 hover:bg-primary/5' : ''
           }`}
         >
           {originalImage
             ? (
-                <Card className="p-2">
+                <Card className="overflow-hidden border-0 bg-transparent p-2 shadow-none">
                   <img
                     src={originalImage}
                     alt="Original"
@@ -55,12 +55,12 @@ export function SideBySideView({
         className="flex-1"
       >
         <DropZone.Content
-          className={`flex-1 flex items-center justify-center rounded-lg ${!modifiedImage ? 'border-2 border-dashed border-border' : ''
+          className={`flex-1 flex items-center justify-center rounded-xl bg-muted/25 transition-colors ${!modifiedImage ? 'border border-dashed border-border hover:border-primary/45 hover:bg-primary/5' : ''
           }`}
         >
           {modifiedImage
             ? (
-                <Card className="p-2">
+                <Card className="overflow-hidden border-0 bg-transparent p-2 shadow-none">
                   <img
                     src={modifiedImage}
                     alt="Modified"

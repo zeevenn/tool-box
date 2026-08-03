@@ -8,12 +8,12 @@ export function Logo({ className = 'w-8 h-8' }: LogoProps) {
       <img
         src="/logo.svg"
         alt="Tool Box Logo"
-        className="w-full h-full block dark:hidden"
+        className="block size-full dark:hidden"
       />
       <img
         src="/logo-dark.svg"
         alt="Tool Box Logo"
-        className="w-full h-full hidden dark:block"
+        className="hidden size-full dark:block"
       />
     </div>
   )

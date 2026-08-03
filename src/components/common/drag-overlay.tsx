@@ -54,7 +54,7 @@ export function DragIndicator({
   return (
     <div className={className}>
       <div className="flex items-center gap-2">
-        <CloudUpload className="size-5" />
+        <CloudUpload className="size-[18px]" />
         {children}
       </div>
     </div>

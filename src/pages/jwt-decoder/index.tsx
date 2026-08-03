@@ -67,11 +67,11 @@ function Section({ title, content, badge }: SectionProps) {
           <Typography variant="muted" className="text-xs font-semibold uppercase tracking-wider">{title}</Typography>
           {badge}
         </div>
-        <Button size="sm" variant="ghost" className="h-6 px-2" onClick={copy}>
-          <Copy className="w-3 h-3" />
+        <Button size="icon-xs" variant="ghost" onClick={copy}>
+          <Copy data-icon="inline-start" />
         </Button>
       </div>
-      <pre className="p-3 rounded-lg border border-border bg-muted/30 font-mono text-sm overflow-x-auto whitespace-pre-wrap break-all">
+      <pre className="overflow-x-auto whitespace-pre-wrap break-all rounded-xl border border-border/70 bg-muted/25 p-4 font-mono text-sm leading-6">
         {content}
       </pre>
     </div>
@@ -91,7 +91,7 @@ export function JwtDecoder() {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden p-4 gap-4">
+    <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-4 sm:p-6">
       {/* Input */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
@@ -102,11 +102,11 @@ export function JwtDecoder() {
                 {isValid ? 'Valid structure' : 'Invalid JWT'}
               </Typography>
             )}
-            <Button size="sm" variant="ghost" className="h-6" onClick={copy}>
-              <Copy className="w-3 h-3" />
+            <Button size="icon-xs" variant="ghost" onClick={copy}>
+              <Copy data-icon="inline-start" />
             </Button>
-            <Button size="sm" variant="ghost" className="h-6" onClick={() => setInput('')}>
-              <Trash2 className="w-3 h-3" />
+            <Button size="icon-xs" variant="ghost" onClick={() => setInput('')}>
+              <Trash2 data-icon="inline-start" />
             </Button>
           </div>
         </div>
@@ -116,7 +116,7 @@ export function JwtDecoder() {
           placeholder="Paste your JWT here..."
           rows={4}
           spellCheck={false}
-          className="resize-none border border-border rounded-md p-3 font-mono text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring break-all"
+          className="resize-none break-all rounded-xl border border-input bg-background/60 p-4 font-mono text-sm leading-6 shadow-inner outline-none transition focus:border-ring focus:ring-3 focus:ring-ring/20"
         />
         <Typography variant="muted" className="text-xs">Decoded client-side only — signature is not verified.</Typography>
       </div>
