@@ -5,31 +5,29 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
+import { useI18n } from '@/context/i18n-provider'
 
-function formatDate(date: Date) {
+function formatDate(date: Date, locale: string) {
   return {
     iso: date.toISOString(),
-    local: date.toLocaleString(),
+    local: date.toLocaleString(locale),
     utc: date.toUTCString(),
-    relative: getRelative(date),
+    relative: getRelative(date, locale),
   }
 }
 
-function getRelative(date: Date): string {
+function getRelative(date: Date, locale: string): string {
   const diff = Date.now() - date.getTime()
   const abs = Math.abs(diff)
-  const sign = diff < 0 ? 'in ' : ''
-  const suffix = diff < 0 ? '' : ' ago'
+  const formatter = new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style: 'short' })
 
-  if (abs < 1000)
-    return 'just now'
   if (abs < 60_000)
-    return `${sign}${Math.floor(abs / 1000)}s${suffix}`
+    return formatter.format(-Math.round(diff / 1000), 'second')
   if (abs < 3_600_000)
-    return `${sign}${Math.floor(abs / 60_000)}m${suffix}`
+    return formatter.format(-Math.round(diff / 60_000), 'minute')
   if (abs < 86_400_000)
-    return `${sign}${Math.floor(abs / 3_600_000)}h${suffix}`
-  return `${sign}${Math.floor(abs / 86_400_000)}d${suffix}`
+    return formatter.format(-Math.round(diff / 3_600_000), 'hour')
+  return formatter.format(-Math.round(diff / 86_400_000), 'day')
 }
 
 interface Parsed {
@@ -40,6 +38,7 @@ interface Parsed {
 }
 
 export function TimestampConverter() {
+  const { locale, t } = useI18n()
   const [now, setNow] = useState(() => Math.floor(Date.now() / 1000))
   const [input, setInput] = useState('')
   const [parsed, setParsed] = useState<Parsed | null>(null)
@@ -68,18 +67,18 @@ export function TimestampConverter() {
     }
 
     if (Number.isNaN(date.getTime())) {
-      setError('Cannot parse input')
+      setError(t('Cannot parse input'))
       setParsed(null)
     }
     else {
       setError(null)
-      setParsed(formatDate(date))
+      setParsed(formatDate(date, locale))
     }
   }
 
   const copy = async (value: string) => {
     await navigator.clipboard.writeText(value)
-    toast.success('Copied')
+    toast.success(t('Copied'))
   }
 
   const applyNow = () => {
@@ -91,13 +90,13 @@ export function TimestampConverter() {
       {/* Current timestamp */}
       <div className="flex items-center gap-3 rounded-xl border border-primary/15 bg-primary/6 p-4 sm:p-5">
         <div>
-          <Typography variant="muted" className="text-xs mb-1">Current Unix Timestamp (seconds)</Typography>
+          <Typography variant="muted" className="text-xs mb-1">{t('Current Unix Timestamp (seconds)')}</Typography>
           <Typography className="font-mono text-2xl font-semibold tracking-tight sm:text-3xl">{now}</Typography>
         </div>
         <div className="ml-auto flex gap-2">
           <Button size="sm" variant="outline" onClick={applyNow}>
             <RefreshCw data-icon="inline-start" />
-            Use Now
+            {t('Use Now')}
           </Button>
           <Button size="icon-sm" variant="ghost" onClick={() => copy(String(now))}>
             <Copy data-icon="inline-start" />
@@ -107,7 +106,7 @@ export function TimestampConverter() {
 
       {/* Input */}
       <div className="flex flex-col gap-2">
-        <Typography variant="muted" className="text-xs">Enter a timestamp (Unix seconds/ms) or date string</Typography>
+        <Typography variant="muted" className="text-xs">{t('Enter a timestamp (Unix seconds/ms) or date string')}</Typography>
         <input
           value={input}
           onChange={e => parse(e.target.value)}
@@ -124,9 +123,9 @@ export function TimestampConverter() {
           {(
             [
               ['ISO 8601', parsed.iso],
-              ['Local', parsed.local],
+              [t('Local'), parsed.local],
               ['UTC', parsed.utc],
-              ['Relative', parsed.relative],
+              [t('Relative'), parsed.relative],
               ['Unix (s)', String(Math.floor(new Date(parsed.iso).getTime() / 1000))],
               ['Unix (ms)', String(new Date(parsed.iso).getTime())],
             ] as [string, string][]

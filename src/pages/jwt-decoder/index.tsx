@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
+import { useI18n } from '@/context/i18n-provider'
 
 function base64UrlDecode(str: string): string {
   const base64 = str.replace(/-/g, '+').replace(/_/g, '/')
@@ -36,7 +37,7 @@ function formatJson(obj: object): string {
   return JSON.stringify(obj, null, 2)
 }
 
-function getExpiry(payload: object): { expired: boolean, label: string } | null {
+function getExpiry(payload: object, locale: string): { expired: boolean, label: string } | null {
   const exp = (payload as Record<string, unknown>).exp
   if (typeof exp !== 'number')
     return null
@@ -44,7 +45,7 @@ function getExpiry(payload: object): { expired: boolean, label: string } | null 
   const expired = date.getTime() < Date.now()
   return {
     expired,
-    label: date.toLocaleString(),
+    label: date.toLocaleString(locale),
   }
 }
 
@@ -55,16 +56,17 @@ interface SectionProps {
 }
 
 function Section({ title, content, badge }: SectionProps) {
+  const { t } = useI18n()
   const copy = async () => {
     await navigator.clipboard.writeText(content)
-    toast.success(`${title} copied`)
+    toast.success(t('{title} copied', { title: t(title) }))
   }
 
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Typography variant="muted" className="text-xs font-semibold uppercase tracking-wider">{title}</Typography>
+          <Typography variant="muted" className="text-xs font-semibold uppercase tracking-wider">{t(title)}</Typography>
           {badge}
         </div>
         <Button size="icon-xs" variant="ghost" onClick={copy}>
@@ -79,15 +81,16 @@ function Section({ title, content, badge }: SectionProps) {
 }
 
 export function JwtDecoder() {
+  const { locale, t } = useI18n()
   const [input, setInput] = useState('')
 
   const decoded = input.trim() ? parseJwt(input.trim()) : null
   const isValid = decoded !== null
-  const expiry = decoded ? getExpiry(decoded.payload) : null
+  const expiry = decoded ? getExpiry(decoded.payload, locale) : null
 
   const copy = async () => {
     await navigator.clipboard.writeText(input)
-    toast.success('Token copied')
+    toast.success(t('Token copied'))
   }
 
   return (
@@ -95,11 +98,11 @@ export function JwtDecoder() {
       {/* Input */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <Typography variant="muted" className="text-xs">JWT Token</Typography>
+          <Typography variant="muted" className="text-xs">{t('JWT Token')}</Typography>
           <div className="flex gap-2">
             {input && (
               <Typography variant="small" className={isValid ? 'text-green-600 dark:text-green-400' : 'text-destructive'}>
-                {isValid ? 'Valid structure' : 'Invalid JWT'}
+                {t(isValid ? 'Valid structure' : 'Invalid JWT')}
               </Typography>
             )}
             <Button size="icon-xs" variant="ghost" onClick={copy}>
@@ -113,12 +116,12 @@ export function JwtDecoder() {
         <textarea
           value={input}
           onChange={e => setInput(e.target.value)}
-          placeholder="Paste your JWT here..."
+          placeholder={t('Paste your JWT here...')}
           rows={4}
           spellCheck={false}
           className="resize-none break-all rounded-xl border border-input bg-background/60 p-4 font-mono text-sm leading-6 shadow-inner outline-none transition focus:border-ring focus:ring-3 focus:ring-ring/20"
         />
-        <Typography variant="muted" className="text-xs">Decoded client-side only — signature is not verified.</Typography>
+        <Typography variant="muted" className="text-xs">{t('Decoded client-side only — signature is not verified.')}</Typography>
       </div>
 
       {/* Decoded sections */}
@@ -132,7 +135,7 @@ export function JwtDecoder() {
               expiry
                 ? (
                     <span className={`text-xs px-1.5 py-0.5 rounded font-mono ${expiry.expired ? 'bg-destructive/10 text-destructive' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'}`}>
-                      {expiry.expired ? 'Expired' : 'Valid'}
+                      {t(expiry.expired ? 'Expired' : 'Valid')}
                       {' '}
                       exp:
                       {' '}

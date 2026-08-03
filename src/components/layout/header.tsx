@@ -1,9 +1,10 @@
 import { SiGithub } from '@icons-pack/react-simple-icons'
-import { Menu, Monitor, Moon, PanelLeftClose, PanelLeftOpen, Sparkles, Sun } from 'lucide-react'
+import { Languages, Menu, Monitor, Moon, PanelLeftClose, PanelLeftOpen, Sparkles, Sun } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
 
 import { navigationGroups, navigationItems } from '@/config/navigation'
+import { useI18n } from '@/context/i18n-provider'
 import { useTheme } from '@/context/theme-provider'
 import { cn } from '@/lib/utils'
 
@@ -32,6 +33,8 @@ const THEME_ICONS = {
 } satisfies Record<ThemeCycle, typeof Sun>
 
 function Brand({ compact = false }: { compact?: boolean }) {
+  const { t } = useI18n()
+
   return (
     <Link
       to="/"
@@ -47,7 +50,7 @@ function Brand({ compact = false }: { compact?: boolean }) {
       {!compact && (
         <span className="min-w-0">
           <span className="block text-[15px] font-semibold tracking-[-0.02em]">Tool Box</span>
-          <span className="block text-xs text-muted-foreground">Utility workspace</span>
+          <span className="block text-xs text-muted-foreground">{t('Utility workspace')}</span>
         </span>
       )}
     </Link>
@@ -56,14 +59,15 @@ function Brand({ compact = false }: { compact?: boolean }) {
 
 function Navigation({ mobile = false, compact = false }: { mobile?: boolean, compact?: boolean }) {
   const location = useLocation()
+  const { t } = useI18n()
 
   return (
-    <nav className={cn('flex flex-col', compact ? 'gap-4' : 'gap-6')} aria-label="Tools">
+    <nav className={cn('flex flex-col', compact ? 'gap-4' : 'gap-6')} aria-label={t('Tools')}>
       {navigationGroups.map(group => (
         <div key={group} className="flex flex-col gap-1">
           {!compact && (
             <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">
-              {group}
+              {t(group)}
             </p>
           )}
           {navigationItems.filter(item => item.group === group).map((item) => {
@@ -79,10 +83,10 @@ function Navigation({ mobile = false, compact = false }: { mobile?: boolean, com
                     ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
                     : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                 )}
-                title={compact ? item.label : undefined}
+                title={compact ? t(item.label) : undefined}
               >
                 <Icon className={cn('size-4 transition-transform group-hover:scale-105', !active && 'text-muted-foreground')} />
-                {!compact && <span className="truncate">{item.label}</span>}
+                {!compact && <span className="truncate">{t(item.label)}</span>}
                 {active && !compact && <span className="ml-auto size-1.5 rounded-full bg-primary-foreground/80" />}
               </Link>
             )
@@ -102,6 +106,7 @@ export function Header({ className }: HeaderProps) {
     () => localStorage.getItem('tool-sidebar-collapsed') === 'true',
   )
   const { theme, setTheme } = useTheme()
+  const { language, t, toggleLanguage } = useI18n()
   const currentTheme = theme as ThemeCycle
   const ThemeIcon = THEME_ICONS[currentTheme] ?? Monitor
 
@@ -142,8 +147,8 @@ export function Header({ className }: HeaderProps) {
                 <Sparkles className="size-3.5" />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium">Private by default</p>
-                <p className="text-[11px] text-muted-foreground">Processed in your browser</p>
+                <p className="text-xs font-medium">{t('Private by default')}</p>
+                <p className="text-[11px] text-muted-foreground">{t('Processed in your browser')}</p>
               </div>
             </div>
           )}
@@ -154,14 +159,24 @@ export function Header({ className }: HeaderProps) {
               size={sidebarCollapsed ? 'icon-sm' : 'sm'}
               className={cn('cursor-pointer [&_svg]:!size-4', sidebarCollapsed ? 'justify-center' : 'justify-start')}
               onClick={cycleTheme}
-              title={`Theme: ${theme}`}
+              title={t('Theme: {theme}', { theme: t(theme) })}
             >
               <ThemeIcon data-icon="inline-start" />
-              {!sidebarCollapsed && <span className="capitalize">{theme}</span>}
+              {!sidebarCollapsed && <span>{t(theme)}</span>}
             </Button>
             <div className={cn('flex items-center gap-1', sidebarCollapsed && 'flex-col')}>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="cursor-pointer [&_svg]:!size-4"
+                onClick={toggleLanguage}
+                aria-label={t('Change language')}
+                title={`${t('Change language')}: ${language === 'en' ? t('English') : t('Simplified Chinese')}`}
+              >
+                <Languages data-icon="inline-start" />
+              </Button>
               <Button variant="ghost" size="icon-sm" className="cursor-pointer [&_svg]:!size-4" asChild>
-                <a href="https://github.com/zeevenn/tool-box" target="_blank" rel="noopener noreferrer" title="View on GitHub">
+                <a href="https://github.com/zeevenn/tool-box" target="_blank" rel="noopener noreferrer" title={t('View on GitHub')}>
                   <SiGithub data-icon="inline-start" />
                   <span className="sr-only">GitHub</span>
                 </a>
@@ -171,9 +186,9 @@ export function Header({ className }: HeaderProps) {
                 size="icon-sm"
                 className="cursor-pointer [&_svg]:!size-4"
                 onClick={toggleSidebar}
-                aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                aria-label={t(sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar')}
                 aria-expanded={!sidebarCollapsed}
-                title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                title={t(sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar')}
               >
                 {sidebarCollapsed
                   ? <PanelLeftOpen data-icon="inline-start" />
@@ -187,20 +202,24 @@ export function Header({ className }: HeaderProps) {
       <header className="flex h-16 shrink-0 items-center justify-between border-b border-border/70 bg-background/85 px-4 backdrop-blur-xl lg:hidden">
         <Brand />
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon-sm" className="cursor-pointer [&_svg]:!size-4" onClick={cycleTheme} title={`Theme: ${theme}`}>
+          <Button variant="ghost" size="icon-sm" className="cursor-pointer [&_svg]:!size-4" onClick={cycleTheme} title={t('Theme: {theme}', { theme: t(theme) })}>
             <ThemeIcon data-icon="inline-start" />
-            <span className="sr-only">Cycle theme</span>
+            <span className="sr-only">{t('Cycle theme')}</span>
+          </Button>
+          <Button variant="ghost" size="icon-sm" className="cursor-pointer [&_svg]:!size-4" onClick={toggleLanguage} title={t('Change language')}>
+            <Languages data-icon="inline-start" />
+            <span className="sr-only">{t('Change language')}</span>
           </Button>
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon-sm" aria-label="Open navigation">
+              <Button variant="outline" size="icon-sm" aria-label={t('Open navigation')}>
                 <Menu data-icon="inline-start" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] gap-0 p-0">
+            <SheetContent side="left" className="w-[300px] gap-0 p-0" closeLabel={t('Close')}>
               <SheetHeader className="border-b border-border p-5 text-left">
                 <SheetTitle>Tool Box</SheetTitle>
-                <SheetDescription>Choose a utility to open.</SheetDescription>
+                <SheetDescription>{t('Choose a utility to open.')}</SheetDescription>
               </SheetHeader>
               <div className="min-h-0 flex-1 overflow-y-auto p-4">
                 <Navigation mobile />

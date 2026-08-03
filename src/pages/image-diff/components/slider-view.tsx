@@ -1,4 +1,5 @@
 import { Slider } from '@/components/ui/slider'
+import { useI18n } from '@/context/i18n-provider'
 
 import { useImageContainerSize } from '../../../hooks/use-image-container-size'
 
@@ -15,6 +16,7 @@ export function SliderView({
   sliderPosition,
   onPositionChange,
 }: SliderViewProps) {
+  const { t } = useI18n()
   const { containerSize, containerRef } = useImageContainerSize(
     originalImage,
     modifiedImage,
@@ -54,7 +56,7 @@ export function SliderView({
             >
               <img
                 src={originalImage}
-                alt="Original"
+                alt={t('Original')}
                 className="w-full h-full"
               />
             </div>
@@ -74,7 +76,7 @@ export function SliderView({
               >
                 <img
                   src={modifiedImage}
-                  alt="Modified"
+                  alt={t('Modified')}
                   className="w-full h-full"
                 />
               </div>

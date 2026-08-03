@@ -3,6 +3,7 @@ import { ShieldCheck } from 'lucide-react'
 import { useLocation } from 'react-router'
 
 import { getNavigationItem } from '@/config/navigation'
+import { useI18n } from '@/context/i18n-provider'
 import { cn } from '@/lib/utils'
 
 import { Header } from './header'
@@ -16,6 +17,7 @@ export function Layout({ children, className }: LayoutProps) {
   const location = useLocation()
   const current = getNavigationItem(location.pathname)
   const Icon = current?.icon
+  const { t } = useI18n()
 
   return (
     <div className={cn('flex h-dvh min-h-[640px] flex-col overflow-hidden bg-background lg:flex-row', className)}>
@@ -31,12 +33,12 @@ export function Layout({ children, className }: LayoutProps) {
                       {Icon && <Icon className="size-[18px]" />}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <h1 className="truncate text-lg font-semibold tracking-[-0.025em] sm:text-xl">{current.label}</h1>
-                      <p className="truncate text-xs text-muted-foreground sm:text-sm">{current.description}</p>
+                      <h1 className="truncate text-lg font-semibold tracking-[-0.025em] sm:text-xl">{t(current.label)}</h1>
+                      <p className="truncate text-xs text-muted-foreground sm:text-sm">{t(current.description)}</p>
                     </div>
                     <div className="hidden items-center gap-2 rounded-full border border-border/70 bg-card/70 px-3 py-1.5 text-xs text-muted-foreground shadow-xs sm:flex">
                       <ShieldCheck className="size-3.5 text-primary" />
-                      Local processing
+                      {t('Local processing')}
                     </div>
                   </section>
 

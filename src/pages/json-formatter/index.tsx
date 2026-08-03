@@ -7,10 +7,12 @@ import { CodeMirrorEditor } from '@/components/common'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
+import { useI18n } from '@/context/i18n-provider'
 
 const jsonLanguage = json()
 
 export function JsonFormatter() {
+  const { t } = useI18n()
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -45,7 +47,7 @@ export function JsonFormatter() {
   const format = () => {
     window.clearTimeout(autoFormatTimerRef.current)
     if (!input.trim()) {
-      setError('Input is empty')
+      setError(t('Input is empty'))
       setOutput('')
       return
     }
@@ -63,7 +65,7 @@ export function JsonFormatter() {
   const minify = () => {
     window.clearTimeout(autoFormatTimerRef.current)
     if (!input.trim()) {
-      setError('Input is empty')
+      setError(t('Input is empty'))
       setOutput('')
       return
     }
@@ -80,29 +82,29 @@ export function JsonFormatter() {
 
   const validate = () => {
     if (!input.trim()) {
-      toast.error('Input is empty')
+      toast.error(t('Input is empty'))
       return
     }
     try {
       JSON.parse(input)
-      toast.success('Valid JSON')
+      toast.success(t('Valid JSON'))
       setError(null)
     }
     catch (e) {
       const msg = (e as Error).message
       setError(msg)
-      toast.error(`Invalid JSON: ${msg}`)
+      toast.error(t('Invalid JSON: {message}', { message: msg }))
     }
   }
 
   const copy = async () => {
     const text = output || input
     if (!text) {
-      toast.error('Nothing to copy')
+      toast.error(t('Nothing to copy'))
       return
     }
     await navigator.clipboard.writeText(text)
-    toast.success('Copied to clipboard')
+    toast.success(t('Copied to clipboard'))
   }
 
   return (
@@ -111,25 +113,25 @@ export function JsonFormatter() {
       <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border/70 bg-card/80 px-4 py-2.5">
         <Button size="sm" onClick={format}>
           <WrapText data-icon="inline-start" />
-          Format
+          {t('Format')}
         </Button>
         <Button size="sm" variant="outline" onClick={minify}>
           <Minimize2 data-icon="inline-start" />
-          Minify
+          {t('Minify')}
         </Button>
         <Button size="sm" variant="outline" onClick={validate}>
           <RefreshCw data-icon="inline-start" />
-          Validate
+          {t('Validate')}
         </Button>
         <Button size="sm" variant="outline" onClick={copy}>
           <Copy data-icon="inline-start" />
-          Copy
+          {t('Copy')}
         </Button>
 
         <Separator orientation="vertical" className="hidden !h-5 sm:block" />
 
         <div className="flex items-center gap-2">
-          <Typography variant="muted" className="text-xs">Indent:</Typography>
+          <Typography variant="muted" className="text-xs">{t('Indent:')}</Typography>
           {[2, 4].map(n => (
             <Button
               key={n}
@@ -148,22 +150,22 @@ export function JsonFormatter() {
       <div className="flex flex-1 flex-col overflow-hidden md:flex-row">
         <div className="flex min-h-0 flex-1 flex-col border-b border-border/70 md:border-r md:border-b-0">
           <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
-            <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Input</Typography>
+            <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">{t('Input')}</Typography>
           </div>
           <div className="relative flex-1 overflow-hidden">
             <CodeMirrorEditor
               value={input}
               onChange={setInput}
               language={jsonLanguage}
-              placeholder="Paste JSON here..."
-              ariaLabel="JSON input"
+              placeholder={t('Paste JSON here...')}
+              ariaLabel={t('JSON input')}
             />
           </div>
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
-            <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Output</Typography>
+            <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">{t('Output')}</Typography>
           </div>
           {error
             ? (
@@ -177,8 +179,8 @@ export function JsonFormatter() {
                     value={output}
                     language={jsonLanguage}
                     readOnly
-                    placeholder="Formatted JSON will appear here..."
-                    ariaLabel="Formatted JSON output"
+                    placeholder={t('Formatted JSON will appear here...')}
+                    ariaLabel={t('Formatted JSON output')}
                   />
                 </div>
               )}

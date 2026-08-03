@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
+import { useI18n } from '@/context/i18n-provider'
 
 // Pure JS MD5 (no dependencies)
 function md5(input: string): string {
@@ -147,6 +148,7 @@ interface HashResult {
 const ALGORITHMS = ['MD5', 'SHA-1', 'SHA-256', 'SHA-512']
 
 export function HashGenerator() {
+  const { t } = useI18n()
   const [input, setInput] = useState('')
   const [results, setResults] = useState<HashResult[]>(
     ALGORITHMS.map(a => ({ algorithm: a, value: '', loading: false })),
@@ -175,7 +177,7 @@ export function HashGenerator() {
 
   const copy = async (value: string, alg: string) => {
     await navigator.clipboard.writeText(value)
-    toast.success(`${alg} hash copied`)
+    toast.success(t('{algorithm} hash copied', { algorithm: alg }))
   }
 
   return (
@@ -183,17 +185,17 @@ export function HashGenerator() {
       {/* Input */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Input text</Typography>
+          <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">{t('Input text')}</Typography>
           {/* eslint-disable-next-line style/max-statements-per-line */}
           <Button size="sm" variant="ghost" className="h-6" onClick={() => { setInput(''); void generate('') }}>
             <RefreshCw data-icon="inline-start" />
-            Clear
+            {t('Clear')}
           </Button>
         </div>
         <textarea
           value={input}
           onChange={e => handleChange(e.target.value)}
-          placeholder="Enter text to hash..."
+          placeholder={t('Enter text to hash...')}
           rows={4}
           spellCheck={false}
           className="resize-none rounded-xl border border-input bg-background/60 p-4 font-mono text-sm leading-6 shadow-inner outline-none transition focus:border-ring focus:ring-3 focus:ring-ring/20"

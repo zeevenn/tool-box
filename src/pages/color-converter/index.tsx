@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
+import { useI18n } from '@/context/i18n-provider'
 
 // Conversion utilities
 function hexToRgb(hex: string): [number, number, number] | null {
@@ -86,6 +87,7 @@ function parseHslInput(value: string): [number, number, number] | null {
 }
 
 export function ColorConverter() {
+  const { t } = useI18n()
   const [hex, setHex] = useState('#3b82f6')
   const [rgb, setRgb] = useState('59, 130, 246')
   const [hsl, setHsl] = useState('217, 91%, 60%')
@@ -136,7 +138,7 @@ export function ColorConverter() {
 
   const copy = async (value: string, label: string) => {
     await navigator.clipboard.writeText(value)
-    toast.success(`${label} copied`)
+    toast.success(t('{label} copied', { label }))
   }
 
   const fields = [
@@ -154,7 +156,7 @@ export function ColorConverter() {
           className="size-20 shrink-0 cursor-pointer rounded-xl border border-border shadow-inner ring-offset-background transition hover:scale-[1.03] focus:outline-none focus:ring-3 focus:ring-ring/30"
           style={{ backgroundColor: previewColor }}
           onClick={() => pickerRef.current?.click()}
-          title="Click to open color picker"
+          title={t('Click to open color picker')}
         />
         <input
           ref={pickerRef}
@@ -177,7 +179,7 @@ export function ColorConverter() {
           </Typography>
         </div>
         <Button size="sm" variant="outline" className="ml-auto hidden sm:inline-flex" onClick={() => pickerRef.current?.click()}>
-          Pick Color
+          {t('Pick Color')}
         </Button>
       </div>
 
@@ -202,7 +204,7 @@ export function ColorConverter() {
 
       {/* Swatches for common colors */}
       <div className="flex flex-col gap-2">
-        <Typography variant="muted" className="text-xs">Common Colors</Typography>
+        <Typography variant="muted" className="text-xs">{t('Common Colors')}</Typography>
         <div className="flex flex-wrap gap-2">
           {[
             '#ef4444',

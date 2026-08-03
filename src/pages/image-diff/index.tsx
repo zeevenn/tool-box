@@ -6,12 +6,14 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
+import { useI18n } from '@/context/i18n-provider'
 
 import { ComingSoon } from '../../components/common'
 import { OverlayView, SideBySideView, SliderView } from './components'
@@ -26,6 +28,7 @@ const COMPARISON_MODES = {
 } satisfies Record<string, ComparisonMode>
 
 export function ImageDiff() {
+  const { t } = useI18n()
   const [originalImage, setOriginalImage] = useState<string | null>(null)
   const [modifiedImage, setModifiedImage] = useState<string | null>(null)
   const [originalImageInfo, setOriginalImageInfo] = useState<{
@@ -70,7 +73,7 @@ export function ImageDiff() {
   const handleOriginalImageSelect = async (files: FileList) => {
     const file = files[0]
     if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file')
+      toast.error(t('Please select an image file'))
       return
     }
 
@@ -87,7 +90,7 @@ export function ImageDiff() {
   const handleModifiedImageSelect = async (files: FileList) => {
     const file = files[0]
     if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file')
+      toast.error(t('Please select an image file'))
       return
     }
 
@@ -144,7 +147,7 @@ export function ImageDiff() {
           />
         )
       case COMPARISON_MODES.DIFFERENCE:
-        return <ComingSoon title="Difference Mode" />
+        return <ComingSoon title={t('Difference Mode')} />
       default:
         return (
           <SideBySideView
@@ -166,7 +169,7 @@ export function ImageDiff() {
             <div className="flex flex-wrap items-center gap-3">
               {/* Comparison Mode Selector */}
               <div className="flex items-center gap-2">
-                <Typography variant="muted">Mode:</Typography>
+                <Typography variant="muted">{t('Mode:')}</Typography>
                 <Select
                   value={comparisonMode}
                   onValueChange={value =>
@@ -176,18 +179,20 @@ export function ImageDiff() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={COMPARISON_MODES.SIDE_BY_SIDE}>
-                      Side by side
-                    </SelectItem>
-                    <SelectItem value={COMPARISON_MODES.OVERLAY}>
-                      Overlay
-                    </SelectItem>
-                    <SelectItem value={COMPARISON_MODES.SLIDER}>
-                      Slider
-                    </SelectItem>
-                    <SelectItem value={COMPARISON_MODES.DIFFERENCE}>
-                      Difference
-                    </SelectItem>
+                    <SelectGroup>
+                      <SelectItem value={COMPARISON_MODES.SIDE_BY_SIDE}>
+                        {t('Side by side')}
+                      </SelectItem>
+                      <SelectItem value={COMPARISON_MODES.OVERLAY}>
+                        {t('Overlay')}
+                      </SelectItem>
+                      <SelectItem value={COMPARISON_MODES.SLIDER}>
+                        {t('Slider')}
+                      </SelectItem>
+                      <SelectItem value={COMPARISON_MODES.DIFFERENCE}>
+                        {t('Difference')}
+                      </SelectItem>
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
@@ -198,7 +203,7 @@ export function ImageDiff() {
               <div className="hidden items-center gap-4 lg:flex">
                 {originalImageInfo && (
                   <Typography variant="muted">
-                    Original:
+                    {t('Original:')}
                     {' '}
                     {originalImageInfo.dimensions.width}
                     ×
@@ -207,7 +212,7 @@ export function ImageDiff() {
                 )}
                 {modifiedImageInfo && (
                   <Typography variant="muted">
-                    Modified:
+                    {t('Modified:')}
                     {' '}
                     {modifiedImageInfo.dimensions.width}
                     ×
@@ -225,14 +230,14 @@ export function ImageDiff() {
                     variant="outline"
                     onClick={() => originalInputRef.current?.click()}
                   >
-                    Change Original
+                    {t('Change Original')}
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => modifiedInputRef.current?.click()}
                   >
-                    Change Modified
+                    {t('Change Modified')}
                   </Button>
                   <input
                     ref={originalInputRef}
@@ -251,7 +256,7 @@ export function ImageDiff() {
                 </>
               )}
               <Button onClick={clearImages} size="sm" variant="secondary">
-                Clear
+                {t('Clear')}
               </Button>
             </div>
           </CardHeader>

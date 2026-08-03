@@ -3,6 +3,7 @@ import type { FileValidation, ValidationResult } from '../../utils'
 
 import { Upload } from 'lucide-react'
 import { createContext, use, useCallback, useMemo, useRef } from 'react'
+import { useI18n } from '../../context/i18n-provider'
 import { useDragAndDrop } from '../../hooks/use-drag-and-drop'
 import { validateFiles } from '../../utils'
 import { Typography } from '../ui/typography'
@@ -183,6 +184,7 @@ function DropZoneMessage({
   description = 'or click to select',
   className = '',
 }: DropZoneMessageProps) {
+  const { t } = useI18n()
   const defaultIcon = (
     <span className="mx-auto mb-4 grid size-12 place-items-center rounded-xl border border-border bg-card text-primary shadow-sm">
       <Upload className="size-[18px]" />
@@ -194,10 +196,10 @@ function DropZoneMessage({
       {icon || defaultIcon}
       <div>
         <Typography variant="small" className="text-foreground">
-          {title}
+          {t(title)}
         </Typography>
         <Typography variant="muted" className="mt-1 text-xs">
-          {description}
+          {t(description)}
         </Typography>
       </div>
     </div>

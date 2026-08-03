@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
+import { useI18n } from '@/context/i18n-provider'
 
 const FLAG_OPTIONS = ['g', 'i', 'm', 's'] as const
 type Flag = typeof FLAG_OPTIONS[number]
@@ -17,6 +18,7 @@ interface Match {
 }
 
 export function RegexTester() {
+  const { t } = useI18n()
   const [pattern, setPattern] = useState('')
   const [flags, setFlags] = useState<Set<Flag>>(() => new Set(['g'] as Flag[]))
   const [testText, setTestText] = useState('')
@@ -103,7 +105,7 @@ export function RegexTester() {
 
   const copy = async (value: string) => {
     await navigator.clipboard.writeText(value)
-    toast.success('Copied')
+    toast.success(t('Copied'))
   }
 
   return (
@@ -144,10 +146,7 @@ export function RegexTester() {
             : pattern
               ? (
                   <Typography variant="small" className={matches.length > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'}>
-                    {matches.length}
-                    {' '}
-                    match
-                    {matches.length !== 1 ? 'es' : ''}
+                    {t(matches.length === 1 ? '{count} match' : '{count} matches', { count: matches.length })}
                   </Typography>
                 )
               : null}
@@ -158,7 +157,7 @@ export function RegexTester() {
         {/* Test text */}
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
-            <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Test text</Typography>
+            <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">{t('Test text')}</Typography>
             <Button size="icon-xs" variant="ghost" onClick={() => setTestText('')}>
               <Trash2 data-icon="inline-start" />
             </Button>
@@ -167,7 +166,7 @@ export function RegexTester() {
             <textarea
               value={testText}
               onChange={e => setTestText(e.target.value)}
-              placeholder="Enter text to test..."
+              placeholder={t('Enter text to test...')}
               spellCheck={false}
               className="absolute inset-0 resize-none bg-transparent p-4 font-mono text-sm leading-6 text-transparent caret-foreground outline-none"
             />
@@ -183,7 +182,7 @@ export function RegexTester() {
             <Separator orientation="vertical" className="hidden md:block" />
             <div className="flex max-h-48 w-full flex-col overflow-hidden border-t border-border/70 md:max-h-none md:w-72 md:border-t-0">
               <div className="border-b border-border/70 bg-muted/35 px-4 py-2">
-                <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">Matches</Typography>
+                <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">{t('Matches')}</Typography>
               </div>
               <div className="flex-1 overflow-y-auto">
                 {matches.map((m, i) => (

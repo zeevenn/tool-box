@@ -5,8 +5,10 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
+import { useI18n } from '@/context/i18n-provider'
 
 export function Base64() {
+  const { t } = useI18n()
   const [text, setText] = useState('')
   const [encoded, setEncoded] = useState('')
   const [mode, setMode] = useState<'encode' | 'decode'>('encode')
@@ -14,27 +16,27 @@ export function Base64() {
 
   const encode = () => {
     if (!text.trim()) {
-      toast.error('Input is empty')
+      toast.error(t('Input is empty'))
       return
     }
     try {
       setEncoded(btoa(unescape(encodeURIComponent(text))))
     }
     catch {
-      toast.error('Failed to encode — contains invalid characters')
+      toast.error(t('Failed to encode — contains invalid characters'))
     }
   }
 
   const decode = () => {
     if (!encoded.trim()) {
-      toast.error('Input is empty')
+      toast.error(t('Input is empty'))
       return
     }
     try {
       setText(decodeURIComponent(escape(atob(encoded.trim()))))
     }
     catch {
-      toast.error('Invalid Base64 input')
+      toast.error(t('Invalid Base64 input'))
     }
   }
 
@@ -54,7 +56,7 @@ export function Base64() {
       setEncoded(dataUrl)
       setText('')
       setMode('decode')
-      toast.success(`Image loaded: ${file.name}`)
+      toast.success(t('Image loaded: {name}', { name: file.name }))
     }
     reader.readAsDataURL(file)
   }
@@ -63,7 +65,7 @@ export function Base64() {
     e.preventDefault()
     const file = e.dataTransfer.files[0]
     if (!file?.type.startsWith('image/')) {
-      toast.error('Please drop an image file')
+      toast.error(t('Please drop an image file'))
       return
     }
     readImageFile(file)
@@ -78,11 +80,11 @@ export function Base64() {
 
   const copy = async (value: string) => {
     if (!value) {
-      toast.error('Nothing to copy')
+      toast.error(t('Nothing to copy'))
       return
     }
     await navigator.clipboard.writeText(value)
-    toast.success('Copied to clipboard')
+    toast.success(t('Copied to clipboard'))
   }
 
   const clear = () => {
@@ -90,8 +92,8 @@ export function Base64() {
     setEncoded('')
   }
 
-  const topLabel = mode === 'encode' ? 'Plain Text' : 'Base64'
-  const bottomLabel = mode === 'encode' ? 'Base64' : 'Plain Text'
+  const topLabel = t(mode === 'encode' ? 'Plain Text' : 'Base64')
+  const bottomLabel = t(mode === 'encode' ? 'Base64' : 'Plain Text')
   const topValue = mode === 'encode' ? text : encoded
   const bottomValue = mode === 'encode' ? encoded : text
   const setTopValue = mode === 'encode' ? setText : setEncoded
@@ -102,17 +104,17 @@ export function Base64() {
       {/* Toolbar */}
       <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border/70 bg-card/80 px-4 py-2.5">
         <Button size="sm" onClick={handleAction}>
-          {mode === 'encode' ? 'Encode' : 'Decode'}
+          {t(mode === 'encode' ? 'Encode' : 'Decode')}
         </Button>
 
         <Button
           size="sm"
           variant="outline"
           onClick={() => setMode(m => m === 'encode' ? 'decode' : 'encode')}
-          title="Switch mode"
+          title={t('Switch mode')}
         >
           <ArrowDownUp data-icon="inline-start" />
-          {mode === 'encode' ? 'Switch to Decode' : 'Switch to Encode'}
+          {t(mode === 'encode' ? 'Switch to Decode' : 'Switch to Encode')}
         </Button>
 
         <Separator orientation="vertical" className="hidden !h-5 sm:block" />
@@ -121,16 +123,16 @@ export function Base64() {
           size="sm"
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
-          title="Load image as Base64"
+          title={t('Load image as Base64')}
         >
           <Image data-icon="inline-start" />
-          Image → Base64
+          {t('Image → Base64')}
         </Button>
         <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageFile} />
 
         <Button size="sm" variant="ghost" onClick={clear}>
           <Trash2 data-icon="inline-start" />
-          Clear
+          {t('Clear')}
         </Button>
       </div>
 
@@ -150,7 +152,7 @@ export function Base64() {
           <textarea
             value={topValue}
             onChange={e => setTopValue(e.target.value)}
-            placeholder={`Enter ${topLabel.toLowerCase()}...`}
+            placeholder={t('Enter {label}...', { label: topLabel.toLowerCase() })}
             spellCheck={false}
             className="flex-1 resize-none bg-card p-4 font-mono text-sm leading-6 focus:outline-none"
           />
@@ -166,7 +168,7 @@ export function Base64() {
           <textarea
             value={bottomValue}
             onChange={e => setBottomValue(e.target.value)}
-            placeholder={`${bottomLabel} will appear here...`}
+            placeholder={t('{label} will appear here...', { label: bottomLabel })}
             spellCheck={false}
             className="flex-1 resize-none bg-card p-4 font-mono text-sm leading-6 focus:outline-none"
           />

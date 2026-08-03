@@ -1,5 +1,6 @@
 import { DropZone } from '@/components/common/drop-zone'
 import { Card } from '@/components/ui/card'
+import { useI18n } from '@/context/i18n-provider'
 
 interface SideBySideViewProps {
   originalImage: string | null
@@ -14,6 +15,8 @@ export function SideBySideView({
   onOriginalImageSelect,
   onModifiedImageSelect,
 }: SideBySideViewProps) {
+  const { t } = useI18n()
+
   return (
     <div className="flex flex-1 flex-col gap-3 p-3 sm:p-4 md:flex-row">
       {/* Original Image */}
@@ -31,7 +34,7 @@ export function SideBySideView({
                 <Card className="overflow-hidden border-0 bg-transparent p-2 shadow-none">
                   <img
                     src={originalImage}
-                    alt="Original"
+                    alt={t('Original')}
                     className="max-w-full max-h-full object-contain"
                   />
                 </Card>
@@ -39,7 +42,7 @@ export function SideBySideView({
             : (
                 <DropZone.Input accept="image/*">
                   <DropZone.Message
-                    title="Drop image here"
+                    title={t('Drop image here')}
                     description="jpg, png, webp, gif, etc."
                   />
                 </DropZone.Input>
@@ -63,7 +66,7 @@ export function SideBySideView({
                 <Card className="overflow-hidden border-0 bg-transparent p-2 shadow-none">
                   <img
                     src={modifiedImage}
-                    alt="Modified"
+                    alt={t('Modified')}
                     className="max-w-full max-h-full object-contain"
                   />
                 </Card>
@@ -71,7 +74,7 @@ export function SideBySideView({
             : (
                 <DropZone.Input accept="image/*">
                   <DropZone.Message
-                    title="Drop image here"
+                    title={t('Drop image here')}
                     description="jpg, png, webp, gif, etc."
                   />
                 </DropZone.Input>
