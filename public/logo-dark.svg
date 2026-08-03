@@ -1,19 +1,7 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Left document -->
-  <path d="M8 6C8 5.44772 8.44772 5 9 5H15C15.5523 5 16 5.44772 16 6V26C16 26.5523 15.5523 27 15 27H9C8.44772 27 8 26.5523 8 26V6Z" fill="#1F2937" fill-opacity="0.9"/>
-  
-  <!-- Right document -->
-  <path d="M16 6C16 5.44772 16.4477 5 17 5H23C23.5523 5 24 5.44772 24 6V26C24 26.5523 23.5523 27 23 27H17C16.4477 27 16 26.5523 16 26V6Z" fill="#1F2937" fill-opacity="0.9"/>
-  
-  <!-- Diff lines on left document -->
-  <line x1="10" y1="9" x2="14" y2="9" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="10" y1="12" x2="13" y2="12" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="10" y1="15" x2="14" y2="15" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="10" y1="18" x2="12" y2="18" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/>
-  
-  <!-- Diff lines on right document -->
-  <line x1="18" y1="9" x2="22" y2="9" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="18" y1="12" x2="20" y2="12" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="18" y1="15" x2="22" y2="15" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="18" y1="18" x2="21" y2="18" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/>
+  <title>Tool Box</title>
+  <rect x="3" y="5" width="11" height="11" rx="3.25" fill="#FAFAFA"/>
+  <rect x="18" y="3" width="11" height="11" rx="3.25" fill="#FB923C"/>
+  <rect x="3" y="19" width="11" height="11" rx="3.25" fill="#FAFAFA"/>
+  <rect x="18" y="17" width="11" height="11" rx="3.25" fill="#FAFAFA"/>
 </svg>
