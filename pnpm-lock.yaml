@@ -9,6 +9,9 @@ catalogs:
     '@antfu/eslint-config':
       specifier: 7.6.1
       version: 7.6.1
+    '@codemirror/autocomplete':
+      specifier: ^6.20.1
+      version: 6.20.1
     '@codemirror/commands':
       specifier: ^6.10.2
       version: 6.10.2
@@ -128,6 +131,9 @@ importers:
 
   .:
     dependencies:
+      '@codemirror/autocomplete':
+        specifier: 'catalog:'
+        version: 6.20.1
       '@codemirror/commands':
         specifier: 'catalog:'
         version: 6.10.2

@@ -1,3 +1,4 @@
+export * from './codemirror-editor'
 export * from './codemirror-merge'
 export * from './coming-soon'
 export * from './loading'

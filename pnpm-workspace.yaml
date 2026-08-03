@@ -5,6 +5,7 @@ trustPolicy: no-downgrade
 
 catalog:
   '@antfu/eslint-config': 7.6.1
+  '@codemirror/autocomplete': ^6.20.1
   '@codemirror/commands': ^6.10.2
   '@codemirror/lang-javascript': ^6.2.5
   '@codemirror/lang-json': ^6.0.2

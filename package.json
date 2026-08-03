@@ -23,6 +23,7 @@
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "catalog:",
     "@codemirror/commands": "catalog:",
     "@codemirror/lang-javascript": "catalog:",
     "@codemirror/lang-json": "catalog:",

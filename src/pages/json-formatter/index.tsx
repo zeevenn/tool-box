@@ -1,21 +1,49 @@
 import { json } from '@codemirror/lang-json'
 import { Copy, Minimize2, RefreshCw, WrapText } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
+import { CodeMirrorEditor } from '@/components/common'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
+
+const jsonLanguage = json()
 
 export function JsonFormatter() {
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [indentSize, setIndentSize] = useState(2)
+  const autoFormatTimerRef = useRef<number | undefined>(undefined)
 
-  void json // ensure import is used (for future CodeMirror integration)
+  useEffect(() => {
+    window.clearTimeout(autoFormatTimerRef.current)
+
+    if (!input.trim()) {
+      setOutput('')
+      setError(null)
+      return
+    }
+
+    const timer = window.setTimeout(() => {
+      try {
+        const parsed = JSON.parse(input)
+        setOutput(JSON.stringify(parsed, null, indentSize))
+        setError(null)
+      }
+      catch (e) {
+        setError((e as Error).message)
+        setOutput('')
+      }
+    }, 200)
+
+    autoFormatTimerRef.current = timer
+    return () => window.clearTimeout(timer)
+  }, [input, indentSize])
 
   const format = () => {
+    window.clearTimeout(autoFormatTimerRef.current)
     if (!input.trim()) {
       setError('Input is empty')
       setOutput('')
@@ -33,6 +61,7 @@ export function JsonFormatter() {
   }
 
   const minify = () => {
+    window.clearTimeout(autoFormatTimerRef.current)
     if (!input.trim()) {
       setError('Input is empty')
       setOutput('')
@@ -121,13 +150,15 @@ export function JsonFormatter() {
           <div className="px-3 py-1.5 border-b border-border bg-muted/40">
             <Typography variant="muted" className="text-xs">Input</Typography>
           </div>
-          <textarea
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder="Paste JSON here..."
-            spellCheck={false}
-            className="flex-1 resize-none p-3 font-mono text-sm bg-background focus:outline-none"
-          />
+          <div className="relative flex-1 overflow-hidden">
+            <CodeMirrorEditor
+              value={input}
+              onChange={setInput}
+              language={jsonLanguage}
+              placeholder="Paste JSON here..."
+              ariaLabel="JSON input"
+            />
+          </div>
         </div>
 
         <div className="flex-1 flex flex-col">
@@ -141,13 +172,15 @@ export function JsonFormatter() {
                 </div>
               )
             : (
-                <textarea
-                  value={output}
-                  readOnly
-                  placeholder="Formatted JSON will appear here..."
-                  spellCheck={false}
-                  className="flex-1 resize-none p-3 font-mono text-sm bg-background focus:outline-none"
-                />
+                <div className="relative flex-1 overflow-hidden">
+                  <CodeMirrorEditor
+                    value={output}
+                    language={jsonLanguage}
+                    readOnly
+                    placeholder="Formatted JSON will appear here..."
+                    ariaLabel="Formatted JSON output"
+                  />
+                </div>
               )}
         </div>
       </div>
