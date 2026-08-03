@@ -42,7 +42,7 @@ export function SideBySideView({
             : (
                 <DropZone.Input accept="image/*">
                   <DropZone.Message
-                    title={t('Drop image here')}
+                    title="Drop image here"
                     description="jpg, png, webp, gif, etc."
                   />
                 </DropZone.Input>
@@ -74,7 +74,7 @@ export function SideBySideView({
             : (
                 <DropZone.Input accept="image/*">
                   <DropZone.Message
-                    title={t('Drop image here')}
+                    title="Drop image here"
                     description="jpg, png, webp, gif, etc."
                   />
                 </DropZone.Input>

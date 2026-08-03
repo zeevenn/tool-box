@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
+import type { TranslationKey } from '@/i18n/messages'
 import {
   Binary,
   Braces,
@@ -15,10 +16,10 @@ import {
 export type NavGroup = 'Compare' | 'Transform' | 'Inspect'
 
 export interface NavItem {
-  label: string
+  label: TranslationKey
   path: string
   shortLabel?: string
-  description: string
+  description: TranslationKey
   group: NavGroup
   icon: LucideIcon
 }

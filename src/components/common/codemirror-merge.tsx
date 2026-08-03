@@ -1,13 +1,13 @@
 import type { LanguageSupport } from '@codemirror/language'
 import type { Extension } from '@codemirror/state'
-import { defaultHighlightStyle, foldGutter, indentOnInput, syntaxHighlighting } from '@codemirror/language'
 import { MergeView } from '@codemirror/merge'
-import { EditorState } from '@codemirror/state'
-import { oneDark } from '@codemirror/theme-one-dark'
-import { EditorView, lineNumbers } from '@codemirror/view'
+import { EditorView } from '@codemirror/view'
 import { useEffect, useMemo, useRef } from 'react'
 
+import { createEditorExtensions } from '@/components/common/codemirror-config'
 import { useTheme } from '@/context/theme-provider'
+
+const EMPTY_EXTENSIONS: Extension[] = []
 
 export interface CodeMirrorMergeProps {
   originalValue: string
@@ -19,6 +19,8 @@ export interface CodeMirrorMergeProps {
   originalExtensions?: Extension[]
   modifiedExtensions?: Extension[]
   language?: LanguageSupport
+  originalAriaLabel?: string
+  modifiedAriaLabel?: string
   className?: string
   onMount?: (view: MergeView) => void
 }
@@ -30,9 +32,11 @@ export function CodeMirrorMerge({
   onModifiedChange,
   onOriginalPaste,
   onModifiedPaste,
-  originalExtensions = [],
-  modifiedExtensions = [],
+  originalExtensions = EMPTY_EXTENSIONS,
+  modifiedExtensions = EMPTY_EXTENSIONS,
   language,
+  originalAriaLabel,
+  modifiedAriaLabel,
   className,
   onMount,
 }: CodeMirrorMergeProps) {
@@ -45,30 +49,21 @@ export function CodeMirrorMerge({
     onModifiedChange,
     onOriginalPaste,
     onModifiedPaste,
+    onMount,
   })
   callbacksRef.current = {
     onOriginalChange,
     onModifiedChange,
     onOriginalPaste,
     onModifiedPaste,
+    onMount,
   }
 
+  const valuesRef = useRef({ originalValue, modifiedValue })
+  valuesRef.current = { originalValue, modifiedValue }
+
   const baseExtensions = useMemo((): Extension[] => {
-    const exts: Extension[] = [
-      lineNumbers(),
-      foldGutter(),
-      indentOnInput(),
-      syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-      EditorView.lineWrapping,
-      EditorState.allowMultipleSelections.of(true),
-    ]
-    if (language) {
-      exts.push(language)
-    }
-    if (resolvedTheme === 'dark') {
-      exts.push(oneDark)
-    }
-    return exts
+    return createEditorExtensions({ language, dark: resolvedTheme === 'dark' })
   }, [resolvedTheme, language])
 
   useEffect(() => {
@@ -81,10 +76,11 @@ export function CodeMirrorMerge({
 
     const mergeView = new MergeView({
       a: {
-        doc: originalValue,
+        doc: valuesRef.current.originalValue,
         extensions: [
           ...baseExtensions,
           ...originalExtensions,
+          EditorView.contentAttributes.of({ 'aria-label': originalAriaLabel ?? 'Original text' }),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
               callbacksRef.current.onOriginalChange?.(update.state.doc.toString())
@@ -108,10 +104,11 @@ export function CodeMirrorMerge({
         ],
       },
       b: {
-        doc: modifiedValue,
+        doc: valuesRef.current.modifiedValue,
         extensions: [
           ...baseExtensions,
           ...modifiedExtensions,
+          EditorView.contentAttributes.of({ 'aria-label': modifiedAriaLabel ?? 'Modified text' }),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
               callbacksRef.current.onModifiedChange?.(update.state.doc.toString())
@@ -140,12 +137,12 @@ export function CodeMirrorMerge({
     })
 
     mergeViewRef.current = mergeView
-    onMount?.(mergeView)
+    callbacksRef.current.onMount?.(mergeView)
 
     return () => {
       mergeView.destroy()
     }
-  }, [baseExtensions])
+  }, [baseExtensions, modifiedAriaLabel, modifiedExtensions, originalAriaLabel, originalExtensions])
 
   useEffect(() => {
     if (!mergeViewRef.current)

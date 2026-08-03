@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { FileValidation, ValidationResult } from '../../utils'
+import type { TranslationKey } from '@/i18n/messages'
 
 import { Upload } from 'lucide-react'
 import { createContext, use, useCallback, useMemo, useRef } from 'react'
@@ -173,8 +174,8 @@ function DropZoneInput({
 
 interface DropZoneMessageProps {
   icon?: ReactNode
-  title?: string
-  description?: string
+  title?: TranslationKey
+  description?: TranslationKey
   className?: string
 }
 

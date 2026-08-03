@@ -1,3 +1,4 @@
+import type { TranslationKey } from '@/i18n/messages'
 import {
   Card,
   CardContent,
@@ -10,8 +11,8 @@ import { useI18n } from '@/context/i18n-provider'
 import { Loading } from './loading'
 
 interface ComingSoonProps {
-  title?: string
-  description?: string
+  title?: TranslationKey
+  description?: TranslationKey
   className?: string
 }
 

@@ -1,10 +1,10 @@
 import { Copy } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useCopyText } from '@/hooks/use-copy-text'
 
 // Conversion utilities
 function hexToRgb(hex: string): [number, number, number] | null {
@@ -88,6 +88,7 @@ function parseHslInput(value: string): [number, number, number] | null {
 
 export function ColorConverter() {
   const { t } = useI18n()
+  const copyText = useCopyText()
   const [hex, setHex] = useState('#3b82f6')
   const [rgb, setRgb] = useState('59, 130, 246')
   const [hsl, setHsl] = useState('217, 91%, 60%')
@@ -134,11 +135,6 @@ export function ColorConverter() {
 
   const handlePickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateFromHex(e.target.value)
-  }
-
-  const copy = async (value: string, label: string) => {
-    await navigator.clipboard.writeText(value)
-    toast.success(t('{label} copied', { label }))
   }
 
   const fields = [
@@ -195,7 +191,7 @@ export function ColorConverter() {
               spellCheck={false}
               className="min-w-0 flex-1 border-0 bg-transparent px-2 py-2 font-mono text-sm outline-none"
             />
-            <Button size="sm" variant="ghost" className="shrink-0" onClick={() => copy(value, label)}>
+            <Button size="sm" variant="ghost" className="shrink-0" onClick={() => copyText(value, t('{label} copied', { label }))}>
               <Copy data-icon="inline-start" />
             </Button>
           </div>

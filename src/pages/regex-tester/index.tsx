@@ -1,11 +1,11 @@
 import { Copy, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useCopyText } from '@/hooks/use-copy-text'
 
 const FLAG_OPTIONS = ['g', 'i', 'm', 's'] as const
 type Flag = typeof FLAG_OPTIONS[number]
@@ -19,6 +19,7 @@ interface Match {
 
 export function RegexTester() {
   const { t } = useI18n()
+  const copyText = useCopyText()
   const [pattern, setPattern] = useState('')
   const [flags, setFlags] = useState<Set<Flag>>(() => new Set(['g'] as Flag[]))
   const [testText, setTestText] = useState('')
@@ -101,11 +102,6 @@ export function RegexTester() {
       parts.push(<span key="t-end">{testText.slice(cursor)}</span>)
     }
     return parts
-  }
-
-  const copy = async (value: string) => {
-    await navigator.clipboard.writeText(value)
-    toast.success(t('Copied'))
   }
 
   return (
@@ -195,7 +191,7 @@ export function RegexTester() {
                         @
                         {m.index}
                       </Typography>
-                      <Button size="icon-xs" variant="ghost" onClick={() => copy(m.value)}>
+                      <Button size="icon-xs" variant="ghost" onClick={() => copyText(m.value, t('Copied'))}>
                         <Copy data-icon="inline-start" />
                       </Button>
                     </div>

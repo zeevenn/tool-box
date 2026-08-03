@@ -1,10 +1,10 @@
 import { Copy, RefreshCw } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
+import { useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useCopyText } from '@/hooks/use-copy-text'
 
 // Pure JS MD5 (no dependencies)
 function md5(input: string): string {
@@ -149,12 +149,15 @@ const ALGORITHMS = ['MD5', 'SHA-1', 'SHA-256', 'SHA-512']
 
 export function HashGenerator() {
   const { t } = useI18n()
+  const copyText = useCopyText()
+  const generationRef = useRef(0)
   const [input, setInput] = useState('')
   const [results, setResults] = useState<HashResult[]>(
     ALGORITHMS.map(a => ({ algorithm: a, value: '', loading: false })),
   )
 
   const generate = async (text: string) => {
+    const generation = ++generationRef.current
     if (!text) {
       setResults(ALGORITHMS.map(a => ({ algorithm: a, value: '', loading: false })))
       return
@@ -167,17 +170,13 @@ export function HashGenerator() {
         return { algorithm: alg, value: await sha(alg, text), loading: false }
       }),
     )
-    setResults(computed)
+    if (generation === generationRef.current)
+      setResults(computed)
   }
 
   const handleChange = (value: string) => {
     setInput(value)
     void generate(value)
-  }
-
-  const copy = async (value: string, alg: string) => {
-    await navigator.clipboard.writeText(value)
-    toast.success(t('{algorithm} hash copied', { algorithm: alg }))
   }
 
   return (
@@ -216,7 +215,7 @@ export function HashGenerator() {
               size="sm"
               variant="ghost"
               disabled={!value}
-              onClick={() => copy(value, algorithm)}
+              onClick={() => copyText(value, t('{algorithm} hash copied', { algorithm }))}
             >
               <Copy data-icon="inline-start" />
             </Button>

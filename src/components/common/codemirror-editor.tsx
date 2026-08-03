@@ -1,13 +1,9 @@
 import type { LanguageSupport } from '@codemirror/language'
 import type { EditorView as EditorViewType } from '@codemirror/view'
-import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete'
-import { indentWithTab } from '@codemirror/commands'
-import { defaultHighlightStyle, foldGutter, indentOnInput, syntaxHighlighting } from '@codemirror/language'
-import { EditorState } from '@codemirror/state'
-import { oneDark } from '@codemirror/theme-one-dark'
-import { EditorView, keymap, lineNumbers, placeholder as showPlaceholder } from '@codemirror/view'
+import { EditorView } from '@codemirror/view'
 import { useEffect, useMemo, useRef } from 'react'
 
+import { createEditorExtensions } from '@/components/common/codemirror-config'
 import { useTheme } from '@/context/theme-provider'
 
 export interface CodeMirrorEditorProps {
@@ -41,32 +37,13 @@ export function CodeMirrorEditor({
   callbacksRef.current = { onChange, onMount }
 
   const baseExtensions = useMemo(() => {
-    const extensions = [
-      lineNumbers(),
-      foldGutter(),
-      indentOnInput(),
-      syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-      EditorView.lineWrapping,
-      EditorState.allowMultipleSelections.of(true),
-      EditorState.readOnly.of(readOnly),
-      EditorView.editable.of(!readOnly),
-      EditorView.contentAttributes.of({ 'aria-label': ariaLabel ?? 'Code editor' }),
-    ]
-
-    if (language)
-      extensions.push(language)
-    if (!readOnly) {
-      extensions.push(
-        closeBrackets(),
-        keymap.of([...closeBracketsKeymap, indentWithTab]),
-      )
-    }
-    if (placeholder)
-      extensions.push(showPlaceholder(placeholder))
-    if (resolvedTheme === 'dark')
-      extensions.push(oneDark)
-
-    return extensions
+    return createEditorExtensions({
+      language,
+      dark: resolvedTheme === 'dark',
+      readOnly,
+      placeholder,
+      ariaLabel: ariaLabel ?? 'Code editor',
+    })
   }, [ariaLabel, language, placeholder, readOnly, resolvedTheme])
 
   useEffect(() => {

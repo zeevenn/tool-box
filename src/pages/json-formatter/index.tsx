@@ -8,11 +8,13 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useCopyText } from '@/hooks/use-copy-text'
 
 const jsonLanguage = json()
 
 export function JsonFormatter() {
   const { t } = useI18n()
+  const copyText = useCopyText()
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -97,16 +99,6 @@ export function JsonFormatter() {
     }
   }
 
-  const copy = async () => {
-    const text = output || input
-    if (!text) {
-      toast.error(t('Nothing to copy'))
-      return
-    }
-    await navigator.clipboard.writeText(text)
-    toast.success(t('Copied to clipboard'))
-  }
-
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Toolbar */}
@@ -123,7 +115,7 @@ export function JsonFormatter() {
           <RefreshCw data-icon="inline-start" />
           {t('Validate')}
         </Button>
-        <Button size="sm" variant="outline" onClick={copy}>
+        <Button size="sm" variant="outline" onClick={() => copyText(output || input)}>
           <Copy data-icon="inline-start" />
           {t('Copy')}
         </Button>

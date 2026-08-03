@@ -1,11 +1,11 @@
 import { Copy, RefreshCw } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useCopyText } from '@/hooks/use-copy-text'
 
 function formatDate(date: Date, locale: string) {
   return {
@@ -39,6 +39,7 @@ interface Parsed {
 
 export function TimestampConverter() {
   const { locale, t } = useI18n()
+  const copyText = useCopyText()
   const [now, setNow] = useState(() => Math.floor(Date.now() / 1000))
   const [input, setInput] = useState('')
   const [parsed, setParsed] = useState<Parsed | null>(null)
@@ -76,11 +77,6 @@ export function TimestampConverter() {
     }
   }
 
-  const copy = async (value: string) => {
-    await navigator.clipboard.writeText(value)
-    toast.success(t('Copied'))
-  }
-
   const applyNow = () => {
     parse(String(now))
   }
@@ -98,7 +94,7 @@ export function TimestampConverter() {
             <RefreshCw data-icon="inline-start" />
             {t('Use Now')}
           </Button>
-          <Button size="icon-sm" variant="ghost" onClick={() => copy(String(now))}>
+          <Button size="icon-sm" variant="ghost" onClick={() => copyText(String(now), t('Copied'))}>
             <Copy data-icon="inline-start" />
           </Button>
         </div>
@@ -135,7 +131,7 @@ export function TimestampConverter() {
                 <Typography variant="muted" className="text-xs mb-0.5">{label}</Typography>
                 <Typography className="font-mono text-sm">{value}</Typography>
               </div>
-              <Button size="sm" variant="ghost" onClick={() => copy(value)}>
+              <Button size="sm" variant="ghost" onClick={() => copyText(value, t('Copied'))}>
                 <Copy data-icon="inline-start" />
               </Button>
             </div>

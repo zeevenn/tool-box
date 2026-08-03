@@ -1,10 +1,11 @@
+import type { TranslationKey } from '@/i18n/messages'
 import { Copy, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useCopyText } from '@/hooks/use-copy-text'
 
 function base64UrlDecode(str: string): string {
   const base64 = str.replace(/-/g, '+').replace(/_/g, '/')
@@ -50,17 +51,14 @@ function getExpiry(payload: object, locale: string): { expired: boolean, label: 
 }
 
 interface SectionProps {
-  title: string
+  title: TranslationKey
   content: string
   badge?: React.ReactNode
 }
 
 function Section({ title, content, badge }: SectionProps) {
   const { t } = useI18n()
-  const copy = async () => {
-    await navigator.clipboard.writeText(content)
-    toast.success(t('{title} copied', { title: t(title) }))
-  }
+  const copyText = useCopyText()
 
   return (
     <div className="flex flex-col gap-1">
@@ -69,7 +67,7 @@ function Section({ title, content, badge }: SectionProps) {
           <Typography variant="muted" className="text-xs font-semibold uppercase tracking-wider">{t(title)}</Typography>
           {badge}
         </div>
-        <Button size="icon-xs" variant="ghost" onClick={copy}>
+        <Button size="icon-xs" variant="ghost" onClick={() => copyText(content, t('{title} copied', { title: t(title) }))}>
           <Copy data-icon="inline-start" />
         </Button>
       </div>
@@ -82,16 +80,12 @@ function Section({ title, content, badge }: SectionProps) {
 
 export function JwtDecoder() {
   const { locale, t } = useI18n()
+  const copyText = useCopyText()
   const [input, setInput] = useState('')
 
   const decoded = input.trim() ? parseJwt(input.trim()) : null
   const isValid = decoded !== null
   const expiry = decoded ? getExpiry(decoded.payload, locale) : null
-
-  const copy = async () => {
-    await navigator.clipboard.writeText(input)
-    toast.success(t('Token copied'))
-  }
 
   return (
     <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-4 sm:p-6">
@@ -105,7 +99,7 @@ export function JwtDecoder() {
                 {t(isValid ? 'Valid structure' : 'Invalid JWT')}
               </Typography>
             )}
-            <Button size="icon-xs" variant="ghost" onClick={copy}>
+            <Button size="icon-xs" variant="ghost" onClick={() => copyText(input, t('Token copied'))}>
               <Copy data-icon="inline-start" />
             </Button>
             <Button size="icon-xs" variant="ghost" onClick={() => setInput('')}>

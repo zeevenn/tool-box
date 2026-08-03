@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useCopyText } from '@/hooks/use-copy-text'
 
 export function Base64() {
   const { t } = useI18n()
+  const copyText = useCopyText()
   const [text, setText] = useState('')
   const [encoded, setEncoded] = useState('')
   const [mode, setMode] = useState<'encode' | 'decode'>('encode')
@@ -78,15 +80,6 @@ export function Base64() {
     readImageFile(file)
   }
 
-  const copy = async (value: string) => {
-    if (!value) {
-      toast.error(t('Nothing to copy'))
-      return
-    }
-    await navigator.clipboard.writeText(value)
-    toast.success(t('Copied to clipboard'))
-  }
-
   const clear = () => {
     setText('')
     setEncoded('')
@@ -145,7 +138,7 @@ export function Base64() {
         <div className="flex min-h-0 flex-1 flex-col border-b border-border/70">
           <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
             <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">{topLabel}</Typography>
-            <Button size="icon-xs" variant="ghost" onClick={() => copy(topValue)}>
+            <Button size="icon-xs" variant="ghost" onClick={() => copyText(topValue)}>
               <Copy data-icon="inline-start" />
             </Button>
           </div>
@@ -161,7 +154,7 @@ export function Base64() {
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
             <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">{bottomLabel}</Typography>
-            <Button size="icon-xs" variant="ghost" onClick={() => copy(bottomValue)}>
+            <Button size="icon-xs" variant="ghost" onClick={() => copyText(bottomValue)}>
               <Copy data-icon="inline-start" />
             </Button>
           </div>

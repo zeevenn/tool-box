@@ -1,13 +1,14 @@
 import { Copy, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useCopyText } from '@/hooks/use-copy-text'
 
 export function UrlEncode() {
   const { t } = useI18n()
+  const copyText = useCopyText()
   const [decoded, setDecoded] = useState('')
   const [encoded, setEncoded] = useState('')
 
@@ -31,15 +32,6 @@ export function UrlEncode() {
     }
   }
 
-  const copy = async (value: string, label: string) => {
-    if (!value) {
-      toast.error(t('Nothing to copy'))
-      return
-    }
-    await navigator.clipboard.writeText(value)
-    toast.success(t('{label} copied to clipboard', { label: t(label) }))
-  }
-
   const clear = () => {
     setDecoded('')
     setEncoded('')
@@ -61,7 +53,7 @@ export function UrlEncode() {
         <div className="flex min-h-0 flex-1 flex-col border-b border-border/70 md:border-r md:border-b-0">
           <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
             <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">{t('Decoded URL')}</Typography>
-            <Button size="icon-xs" variant="ghost" onClick={() => copy(decoded, 'Decoded')}>
+            <Button size="icon-xs" variant="ghost" onClick={() => copyText(decoded, t('{label} copied to clipboard', { label: t('Decoded') }))}>
               <Copy data-icon="inline-start" />
             </Button>
           </div>
@@ -77,7 +69,7 @@ export function UrlEncode() {
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
             <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">{t('Encoded URL')}</Typography>
-            <Button size="icon-xs" variant="ghost" onClick={() => copy(encoded, 'Encoded')}>
+            <Button size="icon-xs" variant="ghost" onClick={() => copyText(encoded, t('{label} copied to clipboard', { label: t('Encoded') }))}>
               <Copy data-icon="inline-start" />
             </Button>
           </div>

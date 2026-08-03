@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -15,8 +15,7 @@ import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
 
-import { ComingSoon } from '../../components/common'
-import { OverlayView, SideBySideView, SliderView } from './components'
+import { DifferenceView, OverlayView, SideBySideView, SliderView } from './components'
 
 type ComparisonMode = 'side-by-side' | 'overlay' | 'slider' | 'difference'
 
@@ -48,6 +47,22 @@ export function ImageDiff() {
   const [overlayOpacity, setOverlayOpacity] = useState(50)
   const originalInputRef = useRef<HTMLInputElement>(null)
   const modifiedInputRef = useRef<HTMLInputElement>(null)
+  const originalUrlRef = useRef<string | null>(null)
+  const modifiedUrlRef = useRef<string | null>(null)
+  const originalRequestRef = useRef(0)
+  const modifiedRequestRef = useRef(0)
+  const mountedRef = useRef(false)
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+      if (originalUrlRef.current)
+        URL.revokeObjectURL(originalUrlRef.current)
+      if (modifiedUrlRef.current)
+        URL.revokeObjectURL(modifiedUrlRef.current)
+    }
+  }, [])
 
   const getImageInfo = (
     file: File,
@@ -57,7 +72,7 @@ export function ImageDiff() {
     size: number
     dimensions: { width: number, height: number }
   }> => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const img = new Image()
       img.onload = () => {
         resolve({
@@ -66,51 +81,76 @@ export function ImageDiff() {
           dimensions: { width: img.width, height: img.height },
         })
       }
+      img.onerror = reject
       img.src = imageUrl
     })
   }
 
   const handleOriginalImageSelect = async (files: FileList) => {
     const file = files[0]
-    if (!file.type.startsWith('image/')) {
+    if (!file || !file.type.startsWith('image/')) {
       toast.error(t('Please select an image file'))
       return
     }
 
-    if (originalImage) {
-      URL.revokeObjectURL(originalImage)
-    }
-
     const imageUrl = URL.createObjectURL(file)
-    const imageInfo = await getImageInfo(file, imageUrl)
-    setOriginalImage(imageUrl)
-    setOriginalImageInfo(imageInfo)
+    const request = ++originalRequestRef.current
+    try {
+      const imageInfo = await getImageInfo(file, imageUrl)
+      if (!mountedRef.current || request !== originalRequestRef.current) {
+        URL.revokeObjectURL(imageUrl)
+        return
+      }
+      if (originalUrlRef.current)
+        URL.revokeObjectURL(originalUrlRef.current)
+      originalUrlRef.current = imageUrl
+      setOriginalImage(imageUrl)
+      setOriginalImageInfo(imageInfo)
+    }
+    catch {
+      URL.revokeObjectURL(imageUrl)
+      if (mountedRef.current && request === originalRequestRef.current)
+        toast.error(t('Please select an image file'))
+    }
   }
 
   const handleModifiedImageSelect = async (files: FileList) => {
     const file = files[0]
-    if (!file.type.startsWith('image/')) {
+    if (!file || !file.type.startsWith('image/')) {
       toast.error(t('Please select an image file'))
       return
     }
 
-    if (modifiedImage) {
-      URL.revokeObjectURL(modifiedImage)
-    }
-
     const imageUrl = URL.createObjectURL(file)
-    const imageInfo = await getImageInfo(file, imageUrl)
-    setModifiedImage(imageUrl)
-    setModifiedImageInfo(imageInfo)
+    const request = ++modifiedRequestRef.current
+    try {
+      const imageInfo = await getImageInfo(file, imageUrl)
+      if (!mountedRef.current || request !== modifiedRequestRef.current) {
+        URL.revokeObjectURL(imageUrl)
+        return
+      }
+      if (modifiedUrlRef.current)
+        URL.revokeObjectURL(modifiedUrlRef.current)
+      modifiedUrlRef.current = imageUrl
+      setModifiedImage(imageUrl)
+      setModifiedImageInfo(imageInfo)
+    }
+    catch {
+      URL.revokeObjectURL(imageUrl)
+      if (mountedRef.current && request === modifiedRequestRef.current)
+        toast.error(t('Please select an image file'))
+    }
   }
 
   const clearImages = () => {
-    if (originalImage) {
-      URL.revokeObjectURL(originalImage)
-    }
-    if (modifiedImage) {
-      URL.revokeObjectURL(modifiedImage)
-    }
+    originalRequestRef.current++
+    modifiedRequestRef.current++
+    if (originalUrlRef.current)
+      URL.revokeObjectURL(originalUrlRef.current)
+    if (modifiedUrlRef.current)
+      URL.revokeObjectURL(modifiedUrlRef.current)
+    originalUrlRef.current = null
+    modifiedUrlRef.current = null
     setOriginalImage(null)
     setModifiedImage(null)
     setOriginalImageInfo(null)
@@ -147,7 +187,9 @@ export function ImageDiff() {
           />
         )
       case COMPARISON_MODES.DIFFERENCE:
-        return <ComingSoon title={t('Difference Mode')} />
+        return originalImage && modifiedImage
+          ? <DifferenceView originalImage={originalImage} modifiedImage={modifiedImage} />
+          : null
       default:
         return (
           <SideBySideView
