@@ -89,7 +89,7 @@ export function TimestampConverter() {
   return (
     <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-4 sm:p-6">
       {/* Current timestamp */}
-      <div className="flex items-center gap-3 rounded-2xl border border-primary/15 bg-primary/6 p-4 sm:p-5">
+      <div className="flex items-center gap-3 rounded-xl border border-primary/15 bg-primary/6 p-4 sm:p-5">
         <div>
           <Typography variant="muted" className="text-xs mb-1">Current Unix Timestamp (seconds)</Typography>
           <Typography className="font-mono text-2xl font-semibold tracking-tight sm:text-3xl">{now}</Typography>

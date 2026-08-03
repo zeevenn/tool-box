@@ -148,10 +148,10 @@ export function ColorConverter() {
   return (
     <div className="flex flex-1 flex-col gap-7 overflow-y-auto p-4 sm:p-6">
       {/* Color Preview + Picker */}
-      <div className="flex items-center gap-4 rounded-2xl border border-border/70 bg-muted/20 p-4 sm:p-5">
+      <div className="flex items-center gap-4 rounded-xl border border-border/70 bg-muted/20 p-4 sm:p-5">
         <button
           type="button"
-          className="size-20 shrink-0 cursor-pointer rounded-2xl border border-border shadow-inner ring-offset-background transition hover:scale-[1.03] focus:outline-none focus:ring-3 focus:ring-ring/30"
+          className="size-20 shrink-0 cursor-pointer rounded-xl border border-border shadow-inner ring-offset-background transition hover:scale-[1.03] focus:outline-none focus:ring-3 focus:ring-ring/30"
           style={{ backgroundColor: previewColor }}
           onClick={() => pickerRef.current?.click()}
           title="Click to open color picker"

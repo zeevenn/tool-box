@@ -184,7 +184,7 @@ function DropZoneMessage({
   className = '',
 }: DropZoneMessageProps) {
   const defaultIcon = (
-    <span className="mx-auto mb-4 grid size-12 place-items-center rounded-2xl border border-border bg-card text-primary shadow-sm">
+    <span className="mx-auto mb-4 grid size-12 place-items-center rounded-xl border border-border bg-card text-primary shadow-sm">
       <Upload className="size-[18px]" />
     </span>
   )
