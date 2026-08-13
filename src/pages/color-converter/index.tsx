@@ -1,9 +1,10 @@
 import { Copy } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useToolState } from '@/context/tool-state-provider'
 import { useCopyText } from '@/hooks/use-copy-text'
 
 // Conversion utilities
@@ -89,10 +90,12 @@ function parseHslInput(value: string): [number, number, number] | null {
 export function ColorConverter() {
   const { t } = useI18n()
   const copyText = useCopyText()
-  const [hex, setHex] = useState('#3b82f6')
-  const [rgb, setRgb] = useState('59, 130, 246')
-  const [hsl, setHsl] = useState('217, 91%, 60%')
-  const [previewColor, setPreviewColor] = useState('#3b82f6')
+  const [toolState, setToolState] = useToolState('color')
+  const { hex, rgb, hsl, previewColor } = toolState
+  const setHex = (hex: string) => setToolState(current => ({ ...current, hex }))
+  const setRgb = (rgb: string) => setToolState(current => ({ ...current, rgb }))
+  const setHsl = (hsl: string) => setToolState(current => ({ ...current, hsl }))
+  const setPreviewColor = (previewColor: string) => setToolState(current => ({ ...current, previewColor }))
   const pickerRef = useRef<HTMLInputElement>(null)
 
   const updateFromHex = (value: string) => {

@@ -1,6 +1,6 @@
 import { json } from '@codemirror/lang-json'
 import { Copy, Minimize2, RefreshCw, WrapText } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 
 import { CodeMirrorEditor } from '@/components/common'
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useToolState } from '@/context/tool-state-provider'
 import { useCopyText } from '@/hooks/use-copy-text'
 
 const jsonLanguage = json()
@@ -15,36 +16,45 @@ const jsonLanguage = json()
 export function JsonFormatter() {
   const { t } = useI18n()
   const copyText = useCopyText()
-  const [input, setInput] = useState('')
-  const [output, setOutput] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [indentSize, setIndentSize] = useState(2)
+  const [toolState, setToolState] = useToolState('jsonFormatter')
+  const { input, output, error, indentSize } = toolState
+  const setInput = (input: string) => setToolState(current => ({ ...current, input }))
+  const setOutput = (output: string) => setToolState(current => ({ ...current, output }))
+  const setError = (error: string | null) => setToolState(current => ({ ...current, error }))
+  const setIndentSize = (indentSize: number) => setToolState(current => ({ ...current, indentSize }))
   const autoFormatTimerRef = useRef<number | undefined>(undefined)
+  const autoFormatSourceRef = useRef({ input, indentSize })
 
   useEffect(() => {
+    const previous = autoFormatSourceRef.current
+    autoFormatSourceRef.current = { input, indentSize }
+    if (previous.input === input && previous.indentSize === indentSize)
+      return
+
     window.clearTimeout(autoFormatTimerRef.current)
 
     if (!input.trim()) {
-      setOutput('')
-      setError(null)
+      setToolState(current => ({ ...current, output: '', error: null }))
       return
     }
 
     const timer = window.setTimeout(() => {
       try {
         const parsed = JSON.parse(input)
-        setOutput(JSON.stringify(parsed, null, indentSize))
-        setError(null)
+        setToolState(current => ({
+          ...current,
+          output: JSON.stringify(parsed, null, indentSize),
+          error: null,
+        }))
       }
       catch (e) {
-        setError((e as Error).message)
-        setOutput('')
+        setToolState(current => ({ ...current, output: '', error: (e as Error).message }))
       }
     }, 200)
 
     autoFormatTimerRef.current = timer
     return () => window.clearTimeout(timer)
-  }, [input, indentSize])
+  }, [input, indentSize, setToolState])
 
   const format = () => {
     window.clearTimeout(autoFormatTimerRef.current)

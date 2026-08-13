@@ -4,6 +4,7 @@ import { Loading } from '@/components/common/loading'
 import { Slider } from '@/components/ui/slider'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useToolState } from '@/context/tool-state-provider'
 
 interface DifferenceViewProps {
   originalImage: string
@@ -41,7 +42,9 @@ function imagePixels(image: HTMLImageElement, width: number, height: number, sca
 export function DifferenceView({ originalImage, modifiedImage }: DifferenceViewProps) {
   const { t } = useI18n()
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [threshold, setThreshold] = useState(24)
+  const [toolState, setToolState] = useToolState('imageDiff')
+  const { differenceThreshold: threshold } = toolState
+  const setThreshold = (differenceThreshold: number) => setToolState(current => ({ ...current, differenceThreshold }))
   const [changedPercentage, setChangedPercentage] = useState(0)
   const [previewReduced, setPreviewReduced] = useState(false)
   const [loading, setLoading] = useState(true)

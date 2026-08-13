@@ -1,9 +1,10 @@
 import { Copy, RefreshCw } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useToolState } from '@/context/tool-state-provider'
 import { useCopyText } from '@/hooks/use-copy-text'
 
 // Pure JS MD5 (no dependencies)
@@ -151,7 +152,9 @@ export function HashGenerator() {
   const { t } = useI18n()
   const copyText = useCopyText()
   const generationRef = useRef(0)
-  const [input, setInput] = useState('')
+  const [toolState, setToolState] = useToolState('hash')
+  const { input } = toolState
+  const setInput = (input: string) => setToolState({ input })
   const [results, setResults] = useState<HashResult[]>(
     ALGORITHMS.map(a => ({ algorithm: a, value: '', loading: false })),
   )
@@ -174,10 +177,9 @@ export function HashGenerator() {
       setResults(computed)
   }
 
-  const handleChange = (value: string) => {
-    setInput(value)
-    void generate(value)
-  }
+  useEffect(() => {
+    void generate(input)
+  }, [input])
 
   return (
     <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-4 sm:p-6">
@@ -185,15 +187,14 @@ export function HashGenerator() {
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">{t('Input text')}</Typography>
-          {/* eslint-disable-next-line style/max-statements-per-line */}
-          <Button size="sm" variant="ghost" className="h-6" onClick={() => { setInput(''); void generate('') }}>
+          <Button size="sm" variant="ghost" className="h-6" onClick={() => setInput('')}>
             <RefreshCw data-icon="inline-start" />
             {t('Clear')}
           </Button>
         </div>
         <textarea
           value={input}
-          onChange={e => handleChange(e.target.value)}
+          onChange={e => setInput(e.target.value)}
           placeholder={t('Enter text to hash...')}
           rows={4}
           spellCheck={false}

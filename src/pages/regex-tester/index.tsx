@@ -1,10 +1,11 @@
 import { Copy, Trash2 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useToolState } from '@/context/tool-state-provider'
 import { useCopyText } from '@/hooks/use-copy-text'
 
 const FLAG_OPTIONS = ['g', 'i', 'm', 's'] as const
@@ -20,18 +21,19 @@ interface Match {
 export function RegexTester() {
   const { t } = useI18n()
   const copyText = useCopyText()
-  const [pattern, setPattern] = useState('')
-  const [flags, setFlags] = useState<Set<Flag>>(() => new Set(['g'] as Flag[]))
-  const [testText, setTestText] = useState('')
+  const [toolState, setToolState] = useToolState('regex')
+  const { pattern, flags, testText } = toolState
+  const setPattern = (pattern: string) => setToolState(current => ({ ...current, pattern }))
+  const setTestText = (testText: string) => setToolState(current => ({ ...current, testText }))
 
   const toggleFlag = (flag: Flag) => {
-    setFlags((prev) => {
-      const next = new Set(prev)
+    setToolState((current) => {
+      const next = new Set(current.flags)
       if (next.has(flag))
         next.delete(flag)
       else
         next.add(flag)
-      return next
+      return { ...current, flags: next }
     })
   }
 

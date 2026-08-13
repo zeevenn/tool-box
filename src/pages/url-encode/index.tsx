@@ -1,16 +1,18 @@
 import { Copy, Trash2 } from 'lucide-react'
-import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useToolState } from '@/context/tool-state-provider'
 import { useCopyText } from '@/hooks/use-copy-text'
 
 export function UrlEncode() {
   const { t } = useI18n()
   const copyText = useCopyText()
-  const [decoded, setDecoded] = useState('')
-  const [encoded, setEncoded] = useState('')
+  const [toolState, setToolState] = useToolState('urlEncode')
+  const { decoded, encoded } = toolState
+  const setDecoded = (decoded: string) => setToolState(current => ({ ...current, decoded }))
+  const setEncoded = (encoded: string) => setToolState(current => ({ ...current, encoded }))
 
   const handleDecodedChange = (value: string) => {
     setDecoded(value)

@@ -1,19 +1,27 @@
 import { ArrowDownUp, Copy, Image, Trash2 } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useToolState } from '@/context/tool-state-provider'
 import { useCopyText } from '@/hooks/use-copy-text'
 
 export function Base64() {
   const { t } = useI18n()
   const copyText = useCopyText()
-  const [text, setText] = useState('')
-  const [encoded, setEncoded] = useState('')
-  const [mode, setMode] = useState<'encode' | 'decode'>('encode')
+  const [toolState, setToolState] = useToolState('base64')
+  const { text, encoded, mode } = toolState
+  const setText = (text: string) => setToolState(current => ({ ...current, text }))
+  const setEncoded = (encoded: string) => setToolState(current => ({ ...current, encoded }))
+  const setMode = (mode: typeof toolState.mode | ((current: typeof toolState.mode) => typeof toolState.mode)) => {
+    setToolState(current => ({
+      ...current,
+      mode: typeof mode === 'function' ? mode(current.mode) : mode,
+    }))
+  }
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const encode = () => {

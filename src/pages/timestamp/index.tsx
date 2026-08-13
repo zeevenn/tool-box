@@ -1,23 +1,24 @@
 import { Copy, RefreshCw } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useToolState } from '@/context/tool-state-provider'
 import { useCopyText } from '@/hooks/use-copy-text'
 
-function formatDate(date: Date, locale: string) {
+function formatDate(date: Date, locale: string, referenceTime: number) {
   return {
     iso: date.toISOString(),
     local: date.toLocaleString(locale),
     utc: date.toUTCString(),
-    relative: getRelative(date, locale),
+    relative: getRelative(date, locale, referenceTime),
   }
 }
 
-function getRelative(date: Date, locale: string): string {
-  const diff = Date.now() - date.getTime()
+function getRelative(date: Date, locale: string, referenceTime: number): string {
+  const diff = referenceTime - date.getTime()
   const abs = Math.abs(diff)
   const formatter = new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style: 'short' })
 
@@ -37,13 +38,30 @@ interface Parsed {
   relative: string
 }
 
+function parseTimestamp(value: string, locale: string, referenceTime: number): { parsed: Parsed | null, error: boolean } {
+  if (!value.trim())
+    return { parsed: null, error: false }
+
+  const num = Number(value.trim())
+  const date = Number.isNaN(num)
+    ? new Date(value.trim())
+    : num > 1e12 ? new Date(num) : new Date(num * 1000)
+
+  return Number.isNaN(date.getTime())
+    ? { parsed: null, error: true }
+    : { parsed: formatDate(date, locale, referenceTime), error: false }
+}
+
 export function TimestampConverter() {
   const { locale, t } = useI18n()
   const copyText = useCopyText()
   const [now, setNow] = useState(() => Math.floor(Date.now() / 1000))
-  const [input, setInput] = useState('')
-  const [parsed, setParsed] = useState<Parsed | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [toolState, setToolState] = useToolState('timestamp')
+  const { input } = toolState
+  const { parsed, error } = useMemo(
+    () => parseTimestamp(input, locale, now * 1000),
+    [input, locale, now], // `now` refreshes relative labels while this Tool is open.
+  )
 
   useEffect(() => {
     const id = setInterval(() => setNow(Math.floor(Date.now() / 1000)), 1000)
@@ -51,30 +69,7 @@ export function TimestampConverter() {
   }, [])
 
   const parse = (value: string) => {
-    setInput(value)
-    if (!value.trim()) {
-      setParsed(null)
-      setError(null)
-      return
-    }
-    const num = Number(value.trim())
-    let date: Date
-    if (!Number.isNaN(num)) {
-      // auto-detect seconds vs milliseconds
-      date = num > 1e12 ? new Date(num) : new Date(num * 1000)
-    }
-    else {
-      date = new Date(value.trim())
-    }
-
-    if (Number.isNaN(date.getTime())) {
-      setError(t('Cannot parse input'))
-      setParsed(null)
-    }
-    else {
-      setError(null)
-      setParsed(formatDate(date, locale))
-    }
+    setToolState({ input: value })
   }
 
   const applyNow = () => {
@@ -109,7 +104,7 @@ export function TimestampConverter() {
           placeholder="e.g. 1700000000 or 2024-01-01T00:00:00Z"
           className="w-full rounded-xl border border-input bg-background/60 px-4 py-3 font-mono text-sm shadow-xs outline-none transition focus:border-ring focus:ring-3 focus:ring-ring/20"
         />
-        {error && <Typography variant="small" className="text-destructive">{error}</Typography>}
+        {error && <Typography variant="small" className="text-destructive">{t('Cannot parse input')}</Typography>}
       </div>
 
       {/* Results */}

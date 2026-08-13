@@ -1,10 +1,10 @@
 import type { TranslationKey } from '@/i18n/messages'
 import { Copy, Trash2 } from 'lucide-react'
-import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useToolState } from '@/context/tool-state-provider'
 import { useCopyText } from '@/hooks/use-copy-text'
 
 function base64UrlDecode(str: string): string {
@@ -81,7 +81,9 @@ function Section({ title, content, badge }: SectionProps) {
 export function JwtDecoder() {
   const { locale, t } = useI18n()
   const copyText = useCopyText()
-  const [input, setInput] = useState('')
+  const [toolState, setToolState] = useToolState('jwt')
+  const { input } = toolState
+  const setInput = (input: string) => setToolState({ input })
 
   const decoded = input.trim() ? parseJwt(input.trim()) : null
   const isValid = decoded !== null

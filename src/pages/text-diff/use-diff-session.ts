@@ -1,6 +1,7 @@
 import type { TranslationKey } from '@/i18n/messages'
 import { useCallback, useMemo, useState } from 'react'
 
+import { useToolState } from '@/context/tool-state-provider'
 import { compress, decompress } from '@/utils/compress'
 
 export type DiffLanguage = 'plain' | 'javascript' | 'typescript' | 'json'
@@ -30,12 +31,6 @@ export const DIFF_LANGUAGE_OPTIONS: { value: DiffLanguage, label: TranslationKey
   { value: 'typescript', label: 'TypeScript' },
   { value: 'json', label: 'JSON' },
 ]
-
-const DEFAULT_DIFF: SharedDiff = {
-  original: 'function hello() {\n  console.log("Hello World");\n}',
-  modified: 'function hello() {\n  console.log("Hello, World!");\n  return "Hello";\n}',
-  lang: 'plain',
-}
 
 function isDiffLanguage(value: unknown): value is DiffLanguage {
   return DIFF_LANGUAGE_OPTIONS.some(option => option.value === value)
@@ -134,32 +129,32 @@ export function normalizeDiffText(content: string) {
 }
 
 export function useDiffSession() {
-  const [diff, setDiff] = useState<SharedDiff>(DEFAULT_DIFF)
+  const [diff, setDiff] = useToolState('textDiff')
   const [history, setHistory] = useState<DiffSnapshot[]>(readSnapshots)
 
   const setOriginalText = useCallback((original: string) => {
     setDiff(current => ({ ...current, original }))
-  }, [])
+  }, [setDiff])
 
   const setModifiedText = useCallback((modified: string) => {
     setDiff(current => ({ ...current, modified }))
-  }, [])
+  }, [setDiff])
 
   const setLanguage = useCallback((lang: DiffLanguage) => {
-    setDiff(current => ({ ...current, lang }))
-  }, [])
+    setDiff(current => ({ ...current, language: lang }))
+  }, [setDiff])
 
   const setSideText = useCallback((side: DiffSide, value: string) => {
     setDiff(current => ({ ...current, [side]: value }))
-  }, [])
+  }, [setDiff])
 
   const swap = useCallback(() => {
     setDiff(current => ({ ...current, original: current.modified, modified: current.original }))
-  }, [])
+  }, [setDiff])
 
   const clear = useCallback(() => {
     setDiff(current => ({ ...current, original: '', modified: '' }))
-  }, [])
+  }, [setDiff])
 
   const saveSnapshot = useCallback(() => {
     if (!diff.original && !diff.modified)
@@ -170,7 +165,7 @@ export function useDiffSession() {
       title: snapshotTitle(diff.original, diff.modified),
       original: diff.original,
       modified: diff.modified,
-      language: diff.lang,
+      language: diff.language,
       createdAt: Date.now(),
     }
     const nextHistory = [
@@ -178,7 +173,7 @@ export function useDiffSession() {
       ...history.filter(item => !(
         item.original === diff.original
         && item.modified === diff.modified
-        && item.language === diff.lang
+        && item.language === diff.language
       )),
     ].slice(0, MAX_DIFF_SNAPSHOTS)
 
@@ -188,8 +183,8 @@ export function useDiffSession() {
   }, [diff, history])
 
   const restoreSnapshot = useCallback((snapshot: DiffSnapshot) => {
-    setDiff({ original: snapshot.original, modified: snapshot.modified, lang: snapshot.language })
-  }, [])
+    setDiff({ original: snapshot.original, modified: snapshot.modified, language: snapshot.language })
+  }, [setDiff])
 
   const deleteSnapshot = useCallback((id: string) => {
     const nextHistory = history.filter(snapshot => snapshot.id !== id)
@@ -203,15 +198,15 @@ export function useDiffSession() {
   }, [])
 
   const createShareToken = useCallback(async () => {
-    return compress(JSON.stringify({ original: diff.original, modified: diff.modified, lang: diff.lang }))
+    return compress(JSON.stringify({ original: diff.original, modified: diff.modified, lang: diff.language }))
   }, [diff])
 
   const loadShareToken = useCallback(async (token: string) => {
     const parsed = JSON.parse(await decompress(token)) as Partial<SharedDiff>
     if (typeof parsed.original !== 'string' || typeof parsed.modified !== 'string' || !isDiffLanguage(parsed.lang))
       throw new Error('Invalid shared diff')
-    setDiff({ original: parsed.original, modified: parsed.modified, lang: parsed.lang })
-  }, [])
+    setDiff({ original: parsed.original, modified: parsed.modified, language: parsed.lang })
+  }, [setDiff])
 
   const stats = useMemo(() => diffStats(diff.original, diff.modified), [diff.original, diff.modified])
   const copyableDiff = useMemo(() => serializeDiff(diff.original, diff.modified), [diff.original, diff.modified])
@@ -219,7 +214,7 @@ export function useDiffSession() {
   return {
     originalText: diff.original,
     modifiedText: diff.modified,
-    language: diff.lang,
+    language: diff.language,
     history,
     stats,
     copyableDiff,

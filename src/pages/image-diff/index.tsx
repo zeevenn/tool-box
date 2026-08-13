@@ -1,6 +1,7 @@
+import type { ImageComparisonMode } from '@/context/tool-state-provider'
 import { useEffect, useRef, useState } from 'react'
-import { toast } from 'sonner'
 
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
@@ -14,41 +15,28 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { Typography } from '@/components/ui/typography'
 import { useI18n } from '@/context/i18n-provider'
+import { useToolState } from '@/context/tool-state-provider'
 
 import { DifferenceView, OverlayView, SideBySideView, SliderView } from './components'
-
-type ComparisonMode = 'side-by-side' | 'overlay' | 'slider' | 'difference'
 
 const COMPARISON_MODES = {
   SIDE_BY_SIDE: 'side-by-side' as const,
   OVERLAY: 'overlay' as const,
   SLIDER: 'slider' as const,
   DIFFERENCE: 'difference' as const,
-} satisfies Record<string, ComparisonMode>
+} satisfies Record<string, ImageComparisonMode>
 
 export function ImageDiff() {
   const { t } = useI18n()
+  const [toolState, setToolState] = useToolState('imageDiff')
+  const { original, modified, comparisonMode, sliderPosition, overlayOpacity } = toolState
   const [originalImage, setOriginalImage] = useState<string | null>(null)
   const [modifiedImage, setModifiedImage] = useState<string | null>(null)
-  const [originalImageInfo, setOriginalImageInfo] = useState<{
-    name: string
-    size: number
-    dimensions: { width: number, height: number }
-  } | null>(null)
-  const [modifiedImageInfo, setModifiedImageInfo] = useState<{
-    name: string
-    size: number
-    dimensions: { width: number, height: number }
-  } | null>(null)
-  const [comparisonMode, setComparisonMode] = useState<ComparisonMode>(
-    COMPARISON_MODES.SIDE_BY_SIDE,
-  )
-  const [sliderPosition, setSliderPosition] = useState(50)
-  const [overlayOpacity, setOverlayOpacity] = useState(50)
+  const setComparisonMode = (comparisonMode: ImageComparisonMode) => setToolState(current => ({ ...current, comparisonMode }))
+  const setSliderPosition = (sliderPosition: number) => setToolState(current => ({ ...current, sliderPosition }))
+  const setOverlayOpacity = (overlayOpacity: number) => setToolState(current => ({ ...current, overlayOpacity }))
   const originalInputRef = useRef<HTMLInputElement>(null)
   const modifiedInputRef = useRef<HTMLInputElement>(null)
-  const originalUrlRef = useRef<string | null>(null)
-  const modifiedUrlRef = useRef<string | null>(null)
   const originalRequestRef = useRef(0)
   const modifiedRequestRef = useRef(0)
   const mountedRef = useRef(false)
@@ -57,12 +45,28 @@ export function ImageDiff() {
     mountedRef.current = true
     return () => {
       mountedRef.current = false
-      if (originalUrlRef.current)
-        URL.revokeObjectURL(originalUrlRef.current)
-      if (modifiedUrlRef.current)
-        URL.revokeObjectURL(modifiedUrlRef.current)
     }
   }, [])
+
+  useEffect(() => {
+    if (!original) {
+      setOriginalImage(null)
+      return
+    }
+    const url = URL.createObjectURL(original.file)
+    setOriginalImage(url)
+    return () => URL.revokeObjectURL(url)
+  }, [original])
+
+  useEffect(() => {
+    if (!modified) {
+      setModifiedImage(null)
+      return
+    }
+    const url = URL.createObjectURL(modified.file)
+    setModifiedImage(url)
+    return () => URL.revokeObjectURL(url)
+  }, [modified])
 
   const getImageInfo = (
     file: File,
@@ -97,20 +101,16 @@ export function ImageDiff() {
     const request = ++originalRequestRef.current
     try {
       const imageInfo = await getImageInfo(file, imageUrl)
-      if (!mountedRef.current || request !== originalRequestRef.current) {
-        URL.revokeObjectURL(imageUrl)
+      if (!mountedRef.current || request !== originalRequestRef.current)
         return
-      }
-      if (originalUrlRef.current)
-        URL.revokeObjectURL(originalUrlRef.current)
-      originalUrlRef.current = imageUrl
-      setOriginalImage(imageUrl)
-      setOriginalImageInfo(imageInfo)
+      setToolState(current => ({ ...current, original: { file, ...imageInfo } }))
     }
     catch {
-      URL.revokeObjectURL(imageUrl)
       if (mountedRef.current && request === originalRequestRef.current)
         toast.error(t('Please select an image file'))
+    }
+    finally {
+      URL.revokeObjectURL(imageUrl)
     }
   }
 
@@ -125,36 +125,23 @@ export function ImageDiff() {
     const request = ++modifiedRequestRef.current
     try {
       const imageInfo = await getImageInfo(file, imageUrl)
-      if (!mountedRef.current || request !== modifiedRequestRef.current) {
-        URL.revokeObjectURL(imageUrl)
+      if (!mountedRef.current || request !== modifiedRequestRef.current)
         return
-      }
-      if (modifiedUrlRef.current)
-        URL.revokeObjectURL(modifiedUrlRef.current)
-      modifiedUrlRef.current = imageUrl
-      setModifiedImage(imageUrl)
-      setModifiedImageInfo(imageInfo)
+      setToolState(current => ({ ...current, modified: { file, ...imageInfo } }))
     }
     catch {
-      URL.revokeObjectURL(imageUrl)
       if (mountedRef.current && request === modifiedRequestRef.current)
         toast.error(t('Please select an image file'))
+    }
+    finally {
+      URL.revokeObjectURL(imageUrl)
     }
   }
 
   const clearImages = () => {
     originalRequestRef.current++
     modifiedRequestRef.current++
-    if (originalUrlRef.current)
-      URL.revokeObjectURL(originalUrlRef.current)
-    if (modifiedUrlRef.current)
-      URL.revokeObjectURL(modifiedUrlRef.current)
-    originalUrlRef.current = null
-    modifiedUrlRef.current = null
-    setOriginalImage(null)
-    setModifiedImage(null)
-    setOriginalImageInfo(null)
-    setModifiedImageInfo(null)
+    setToolState(current => ({ ...current, original: null, modified: null }))
   }
 
   const renderCurrentView = () => {
@@ -205,7 +192,7 @@ export function ImageDiff() {
   return (
     <Card className="flex flex-1 flex-col gap-0 rounded-none border-0 bg-transparent py-0 shadow-none">
       {/* Toolbar */}
-      {originalImageInfo && modifiedImageInfo && (
+      {original && modified && (
         <>
           <CardHeader className="flex-row flex-wrap items-center justify-between gap-3 px-4 py-3">
             <div className="flex flex-wrap items-center gap-3">
@@ -215,7 +202,7 @@ export function ImageDiff() {
                 <Select
                   value={comparisonMode}
                   onValueChange={value =>
-                    setComparisonMode(value as ComparisonMode)}
+                    setComparisonMode(value as ImageComparisonMode)}
                 >
                   <SelectTrigger className="w-[140px]">
                     <SelectValue />
@@ -243,22 +230,22 @@ export function ImageDiff() {
 
               {/* Image Info */}
               <div className="hidden items-center gap-4 lg:flex">
-                {originalImageInfo && (
+                {original && (
                   <Typography variant="muted">
                     {t('Original:')}
                     {' '}
-                    {originalImageInfo.dimensions.width}
+                    {original.dimensions.width}
                     ×
-                    {originalImageInfo.dimensions.height}
+                    {original.dimensions.height}
                   </Typography>
                 )}
-                {modifiedImageInfo && (
+                {modified && (
                   <Typography variant="muted">
                     {t('Modified:')}
                     {' '}
-                    {modifiedImageInfo.dimensions.width}
+                    {modified.dimensions.width}
                     ×
-                    {modifiedImageInfo.dimensions.height}
+                    {modified.dimensions.height}
                   </Typography>
                 )}
               </div>
