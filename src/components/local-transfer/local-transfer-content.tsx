@@ -190,7 +190,6 @@ export function LocalTransferContent({ isMac }: LocalTransferContentProps) {
         event.preventDefault()
         requestAnimationFrame(() => inputRef.current?.focus())
       }}
-      onInteractOutside={event => event.preventDefault()}
     >
       <SheetHeader className="border-b border-border/70 pr-12 text-left">
         <SheetTitle className="flex items-center gap-2">
@@ -262,6 +261,11 @@ export function LocalTransferContent({ isMac }: LocalTransferContentProps) {
                             }).format(item.createdAt)}
                           </CardDescription>
                           <CardAction className="flex items-center gap-1">
+                            {isLong && (
+                              <Button variant="ghost" size="xs" onClick={() => toggleExpanded(item.id)}>
+                                {t(isExpanded ? 'Show less' : 'Show more')}
+                              </Button>
+                            )}
                             <Button
                               variant="ghost"
                               size="icon-xs"
@@ -304,11 +308,6 @@ export function LocalTransferContent({ isMac }: LocalTransferContentProps) {
                                   characters: item.content.length,
                                 })}
                           </p>
-                          {isLong && (
-                            <Button variant="ghost" size="xs" onClick={() => toggleExpanded(item.id)}>
-                              {t(isExpanded ? 'Show less' : 'Show more')}
-                            </Button>
-                          )}
                         </CardFooter>
                       </Card>
                     )
