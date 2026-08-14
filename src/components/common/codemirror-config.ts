@@ -1,7 +1,7 @@
 import type { LanguageSupport } from '@codemirror/language'
 import type { Extension } from '@codemirror/state'
 import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete'
-import { indentWithTab } from '@codemirror/commands'
+import { defaultKeymap, indentWithTab } from '@codemirror/commands'
 import { defaultHighlightStyle, foldGutter, foldKeymap, indentOnInput, syntaxHighlighting } from '@codemirror/language'
 import { EditorState } from '@codemirror/state'
 import { oneDark } from '@codemirror/theme-one-dark'
@@ -41,7 +41,7 @@ export function createEditorExtensions({
   if (!readOnly) {
     extensions.push(
       closeBrackets(),
-      keymap.of([...closeBracketsKeymap, indentWithTab]),
+      keymap.of([...closeBracketsKeymap, ...defaultKeymap, indentWithTab]),
     )
   }
   if (placeholder)
