@@ -1,8 +1,10 @@
 import { SiGithub } from '@icons-pack/react-simple-icons'
-import { Languages, Menu, Monitor, Moon, PanelLeftClose, PanelLeftOpen, Sparkles, Sun } from 'lucide-react'
-import { useState } from 'react'
+import { Inbox, Languages, Menu, Monitor, Moon, PanelLeftClose, PanelLeftOpen, Sparkles, Sun } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router'
 
+import { LocalTransferContent } from '@/components/local-transfer/local-transfer-content'
+import { Kbd, KbdGroup } from '@/components/ui/kbd'
 import { navigationGroups, navigationItems } from '@/config/navigation'
 import { useI18n } from '@/context/i18n-provider'
 import { useTheme } from '@/context/theme-provider'
@@ -107,6 +109,8 @@ export function Header({ className }: HeaderProps) {
   )
   const { theme, setTheme } = useTheme()
   const { language, t, toggleLanguage } = useI18n()
+  const [localTransferOpen, setLocalTransferOpen] = useState(false)
+  const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
   const currentTheme = theme as ThemeCycle
   const ThemeIcon = THEME_ICONS[currentTheme] ?? Monitor
 
@@ -123,8 +127,21 @@ export function Header({ className }: HeaderProps) {
     })
   }
 
+  useEffect(() => {
+    const handleShortcut = (event: globalThis.KeyboardEvent) => {
+      if (event.code !== 'Period' || !event.shiftKey || !(event.metaKey || event.ctrlKey) || event.altKey)
+        return
+
+      event.preventDefault()
+      setLocalTransferOpen(open => !open)
+    }
+
+    window.addEventListener('keydown', handleShortcut, { capture: true })
+    return () => window.removeEventListener('keydown', handleShortcut, { capture: true })
+  }, [])
+
   return (
-    <>
+    <Sheet modal={false} open={localTransferOpen} onOpenChange={setLocalTransferOpen}>
       <aside
         className={cn(
           'hidden h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar/90 py-4 backdrop-blur-xl lg:flex',
@@ -141,6 +158,28 @@ export function Header({ className }: HeaderProps) {
         </div>
 
         <div className={cn('mt-4 flex flex-col border-t border-sidebar-border pt-4', sidebarCollapsed ? 'items-center gap-1' : 'gap-3 px-1')}>
+          <SheetTrigger asChild>
+            <Button
+              variant="ghost"
+              size={sidebarCollapsed ? 'icon-sm' : 'sm'}
+              className={cn('w-full', sidebarCollapsed ? 'justify-center' : 'justify-between')}
+              aria-label={t('Open local drop')}
+              title={sidebarCollapsed ? t('Open local drop') : undefined}
+            >
+              <span className="flex items-center gap-2">
+                <Inbox data-icon="inline-start" />
+                {!sidebarCollapsed && <span>{t('Local Drop')}</span>}
+              </span>
+              {!sidebarCollapsed && (
+                <KbdGroup>
+                  <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
+                  <Kbd>⇧</Kbd>
+                  <Kbd>.</Kbd>
+                </KbdGroup>
+              )}
+            </Button>
+          </SheetTrigger>
+
           {!sidebarCollapsed && (
             <div className="flex items-center gap-2 rounded-lg bg-accent/60 px-3 py-2.5">
               <span className="grid size-7 place-items-center rounded-lg bg-primary/10 text-primary">
@@ -202,6 +241,11 @@ export function Header({ className }: HeaderProps) {
       <header className="flex h-16 shrink-0 items-center justify-between border-b border-border/70 bg-background/85 px-4 backdrop-blur-xl lg:hidden">
         <Brand />
         <div className="flex items-center gap-1">
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon-sm" aria-label={t('Open local drop')} title={t('Open local drop')}>
+              <Inbox data-icon="inline-start" />
+            </Button>
+          </SheetTrigger>
           <Button variant="ghost" size="icon-sm" className="cursor-pointer [&_svg]:!size-4" onClick={cycleTheme} title={t('Theme: {theme}', { theme: t(theme) })}>
             <ThemeIcon data-icon="inline-start" />
             <span className="sr-only">{t('Cycle theme')}</span>
@@ -228,6 +272,7 @@ export function Header({ className }: HeaderProps) {
           </Sheet>
         </div>
       </header>
-    </>
+      <LocalTransferContent isMac={isMac} />
+    </Sheet>
   )
 }

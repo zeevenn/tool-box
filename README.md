@@ -28,6 +28,7 @@ Tool Box keeps the small jobs that interrupt development in one focused workspac
 
 | Category  | Tool                | What it does                                                                                                          |
 | --------- | ------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Workspace | **Local Drop**      | Hold up to 20 text snippets beside any tool; JSON is formatted for viewing while the original remains copyable.      |
 | Compare   | **Text Diff**       | Compare text or code with syntax-aware editors, change statistics, share links, and up to 20 locally saved snapshots. |
 | Compare   | **Image Diff**      | Compare two images side by side, as an overlay, with a slider, or through a pixel-difference view.                    |
 | Transform | **JSON Formatter**  | Format, minify, validate, and copy JSON with 2- or 4-space indentation.                                               |
