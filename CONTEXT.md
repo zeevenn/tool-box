@@ -28,6 +28,14 @@ _Avoid_: Notes, clipboard history, saved items
 One immutable text snippet in the **Local Drop**, including its capture time. Valid JSON may be formatted for display, but copying always returns the original text.
 _Avoid_: Note, message
 
+**Scratchpad**:
+A browser-local writing **Tool** for editable drafts that persist across app sessions.
+_Avoid_: Local Drop, clipboard
+
+**Scratch Draft**:
+One editable title and text body in the **Scratchpad**, including its last-updated time. A draft is automatically saved in the browser and can be copied or downloaded.
+_Avoid_: Local Drop Item, snapshot
+
 ## Relationships
 
 - The workspace contains multiple **Tools**
@@ -36,6 +44,8 @@ _Avoid_: Note, message
 - An image comparison **Tool** owns exactly one active **Image Comparison**
 - The workspace owns exactly one **Local Drop**
 - The **Local Drop** contains zero to twenty **Local Drop Items**
+- The workspace owns exactly one **Scratchpad**
+- The **Scratchpad** contains one to twenty **Scratch Drafts**
 
 ## Example dialogue
 
@@ -49,3 +59,4 @@ _Avoid_: Note, message
 
 - "History" refers to the collection of **Diff Snapshots**, not every editor change.
 - The **Local Drop** is intentionally temporary and bounded; it is not a note-taking or archival system.
+- **Scratch Drafts** persist across app sessions, unlike ordinary **Tool** input state and **Local Drop Items**.

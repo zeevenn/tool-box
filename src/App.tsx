@@ -17,6 +17,7 @@ const RegexTester = lazy(() => import('./pages/regex-tester').then(module => ({ 
 const TimestampConverter = lazy(() => import('./pages/timestamp').then(module => ({ default: module.TimestampConverter })))
 const JwtDecoder = lazy(() => import('./pages/jwt-decoder').then(module => ({ default: module.JwtDecoder })))
 const ColorConverter = lazy(() => import('./pages/color-converter').then(module => ({ default: module.ColorConverter })))
+const Scratchpad = lazy(() => import('./pages/scratchpad').then(module => ({ default: module.Scratchpad })))
 
 function App() {
   useDynamicFavicon()
@@ -38,6 +39,7 @@ function App() {
             <Route path="/timestamp" element={<TimestampConverter />} />
             <Route path="/jwt" element={<JwtDecoder />} />
             <Route path="/color" element={<ColorConverter />} />
+            <Route path="/scratchpad" element={<Scratchpad />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

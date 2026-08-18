@@ -8,12 +8,13 @@ import {
   Fingerprint,
   ImageIcon,
   Link2,
+  NotebookPen,
   Palette,
   Regex,
   TextSelect,
 } from 'lucide-react'
 
-export type NavGroup = 'Compare' | 'Transform' | 'Inspect'
+export type NavGroup = 'Workspace' | 'Compare' | 'Transform' | 'Inspect'
 
 export interface NavItem {
   label: TranslationKey
@@ -25,6 +26,13 @@ export interface NavItem {
 }
 
 export const navigationItems: NavItem[] = [
+  {
+    label: 'Scratchpad',
+    path: '/scratchpad',
+    description: 'Write and keep quick notes locally in your browser.',
+    group: 'Workspace',
+    icon: NotebookPen,
+  },
   {
     label: 'Text Diff',
     shortLabel: 'Text',
@@ -106,7 +114,7 @@ export const navigationItems: NavItem[] = [
   },
 ]
 
-export const navigationGroups: NavGroup[] = ['Compare', 'Transform', 'Inspect']
+export const navigationGroups: NavGroup[] = ['Workspace', 'Compare', 'Transform', 'Inspect']
 
 export function getNavigationItem(pathname: string) {
   return navigationItems.find(item => item.path === pathname)
