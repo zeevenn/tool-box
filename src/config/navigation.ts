@@ -29,7 +29,7 @@ export const navigationItems: NavItem[] = [
   {
     label: 'Scratchpad',
     path: '/scratchpad',
-    description: 'Write and keep quick notes locally in your browser.',
+    description: 'Write and keep quick notes.',
     group: 'Workspace',
     icon: NotebookPen,
   },
@@ -76,7 +76,7 @@ export const navigationItems: NavItem[] = [
     label: 'Hash Generator',
     shortLabel: 'Hash',
     path: '/hash',
-    description: 'Generate common cryptographic hashes locally.',
+    description: 'Generate common cryptographic hashes.',
     group: 'Transform',
     icon: Fingerprint,
   },

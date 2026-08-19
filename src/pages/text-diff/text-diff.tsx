@@ -245,7 +245,7 @@ export function TextDiff() {
           <SheetContent className="w-full gap-0 p-0 sm:max-w-md" closeLabel={t('Close')}>
             <SheetHeader className="border-b border-border text-left">
               <SheetTitle>{t('Diff history')}</SheetTitle>
-              <SheetDescription>{t('Saved locally in this browser.')}</SheetDescription>
+              <SheetDescription>{t('Save diffs to revisit them later.')}</SheetDescription>
             </SheetHeader>
             <div className="flex min-h-0 flex-1 flex-col">
               <div className="flex items-center justify-between border-b border-border px-4 py-2.5">

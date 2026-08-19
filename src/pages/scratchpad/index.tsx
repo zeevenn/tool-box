@@ -178,8 +178,8 @@ export function Scratchpad() {
   }
 
   const saveStatusLabel = {
-    error: t('Unable to save locally'),
-    saved: t('Saved locally'),
+    error: t('Unable to save'),
+    saved: t('Saved'),
     saving: t('Saving...'),
   }[saveStatus]
 
@@ -292,7 +292,7 @@ export function Scratchpad() {
             <span>{t('{count} lines', { count: stats.lines })}</span>
             <span>{t('{count} words', { count: stats.words })}</span>
             <span>{t('{count} characters', { count: stats.characters })}</span>
-            <span className="ml-auto hidden sm:inline">{t('Autosaved in this browser')}</span>
+            <span className="ml-auto hidden sm:inline">{t('Autosaved')}</span>
           </div>
         </section>
       </div>
