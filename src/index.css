@@ -247,23 +247,28 @@ body {
   line-height: 1.65;
 }
 
-/* CodeMirror MergeView height fix */
+/* CodeMirror MergeView uses one shared vertical scroll container so both
+ * editors stay aligned while scrolling. */
 .cm-mergeView {
   height: 100% !important;
+  overflow-y: auto;
 }
 
 .cm-mergeViewEditors {
-  height: 100% !important;
+  min-height: 100%;
 }
 
 .cm-mergeViewEditor {
-  height: 100% !important;
+  min-height: 100%;
 }
 
 .cm-mergeViewEditor .cm-editor {
-  height: 100% !important;
+  height: auto !important;
+  min-height: 100%;
 }
 
 .cm-mergeViewEditor .cm-scroller {
-  overflow: auto !important;
+  height: auto !important;
+  min-height: 100%;
+  overflow-y: visible !important;
 }
