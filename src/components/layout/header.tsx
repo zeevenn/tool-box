@@ -1,5 +1,5 @@
 import { SiGithub } from '@icons-pack/react-simple-icons'
-import { Languages, Menu, Monitor, Moon, PanelLeftClose, PanelLeftOpen, Sun } from 'lucide-react'
+import { Languages, Menu, Monitor, Moon, PanelLeftClose, PanelLeftOpen, ShieldCheck, Sun } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
 
@@ -141,6 +141,18 @@ export function Header({ className }: HeaderProps) {
         </div>
 
         <div className={cn('mt-4 flex flex-col border-t border-sidebar-border pt-4', sidebarCollapsed ? 'items-center gap-1' : 'gap-3 px-1')}>
+          {!sidebarCollapsed && (
+            <div className="flex items-center gap-2.5 rounded-lg bg-accent/60 px-3 py-2.5">
+              <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+                <ShieldCheck className="size-3.5" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium">{t('Privacy first')}</p>
+                <p className="text-[11px] text-muted-foreground">{t('Processed in your browser')}</p>
+              </div>
+            </div>
+          )}
+
           <div className={cn('flex items-center gap-1', sidebarCollapsed ? 'flex-col' : 'justify-between')}>
             <Button
               variant="ghost"

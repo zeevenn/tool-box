@@ -26,6 +26,8 @@ export const zhCN = {
   'Inspect JWT headers, payloads, and expiration.': '检查 JWT 标头、载荷和过期时间。',
   'Convert HEX, RGB, and HSL color values.': '转换 HEX、RGB 和 HSL 颜色值。',
   'Write and keep quick notes.': '随手记录和保存内容。',
+  'Privacy first': '隐私优先',
+  'Processed in your browser': '内容在浏览器中处理',
   'Loading': '加载中',
   'light': '明亮',
   'dark': '深色',
