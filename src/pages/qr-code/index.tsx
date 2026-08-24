@@ -165,17 +165,17 @@ export function QrCodeGenerator() {
   }
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
-      <div className="mx-auto grid max-w-6xl items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <Card>
+    <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 lg:overflow-hidden">
+      <div className="grid min-h-full w-full items-stretch gap-3 lg:h-full lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_24rem]">
+        <Card className="h-full min-h-[32rem] lg:min-h-0">
           <CardHeader>
             <CardTitle>{t('Create QR code')}</CardTitle>
             <CardDescription>{t('Enter text or a URL to create a downloadable QR code.')}</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_18rem]">
-              <FieldGroup>
-                <Field>
+          <CardContent className="min-h-0 flex-1">
+            <div className="grid h-full min-h-0 items-stretch gap-6 md:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
+              <FieldGroup className="h-full min-h-0">
+                <Field className="h-full min-h-0">
                   <FieldLabel htmlFor="qr-content">{t('Content')}</FieldLabel>
                   <Textarea
                     id="qr-content"
@@ -184,13 +184,13 @@ export function QrCodeGenerator() {
                     placeholder={t('Enter text or paste a URL...')}
                     rows={9}
                     spellCheck={false}
-                    className="min-h-52 resize-none"
+                    className="min-h-52 flex-1 resize-none md:min-h-0"
                   />
                   <FieldDescription>{t('Your content stays in this browser.')}</FieldDescription>
                 </Field>
               </FieldGroup>
 
-              <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl border border-border/70 bg-muted/20 p-4">
+              <div className="flex min-h-72 w-full items-center justify-center overflow-hidden rounded-xl border border-border/70 bg-muted/20 p-4 md:min-h-0">
                 {dataUrl
                   ? (
                       <img
@@ -228,16 +228,16 @@ export function QrCodeGenerator() {
           </CardFooter>
         </Card>
 
-        <Card>
+        <Card className="h-full min-h-80 lg:min-h-0">
           <CardHeader>
             <CardTitle>{t('Recent history')}</CardTitle>
             <CardDescription>{t('Stored locally, newest first.')}</CardDescription>
             <CardAction><Badge variant="secondary">{`${history.length}/${MAX_HISTORY}`}</Badge></CardAction>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-h-0 flex-1">
             {history.length > 0
               ? (
-                  <div className="flex max-h-[28rem] flex-col gap-1 overflow-y-auto pr-1">
+                  <div className="flex h-full flex-col gap-1 overflow-y-auto pr-1">
                     {history.map(entry => (
                       <div key={entry.id} className="flex min-w-0 items-center gap-1">
                         <Button
@@ -267,7 +267,7 @@ export function QrCodeGenerator() {
                   </div>
                 )
               : (
-                  <Empty className="border-0 px-2 py-8 md:p-8">
+                  <Empty className="h-full min-h-52 border-0 px-2 py-8 md:p-8">
                     <EmptyHeader>
                       <EmptyMedia variant="icon"><History /></EmptyMedia>
                       <EmptyTitle>{t('No QR code history')}</EmptyTitle>
