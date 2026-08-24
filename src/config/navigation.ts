@@ -10,6 +10,7 @@ import {
   Link2,
   NotebookPen,
   Palette,
+  QrCode,
   Regex,
   TextSelect,
 } from 'lucide-react'
@@ -79,6 +80,14 @@ export const navigationItems: NavItem[] = [
     description: 'Generate common cryptographic hashes.',
     group: 'Transform',
     icon: Fingerprint,
+  },
+  {
+    label: 'QR Code Generator',
+    shortLabel: 'QR Code',
+    path: '/qr-code',
+    description: 'Create downloadable QR codes and revisit recent history.',
+    group: 'Transform',
+    icon: QrCode,
   },
   {
     label: 'Regex Tester',

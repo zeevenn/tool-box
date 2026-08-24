@@ -46,6 +46,9 @@ export interface ToolState {
   hash: {
     input: string
   }
+  qrCode: {
+    input: string
+  }
   regex: {
     pattern: string
     flags: Set<RegexFlag>
@@ -83,6 +86,7 @@ const INITIAL_TOOL_STATE: ToolState = {
   base64: { text: '', encoded: '', mode: 'encode' },
   urlEncode: { decoded: '', encoded: '' },
   hash: { input: '' },
+  qrCode: { input: '' },
   regex: { pattern: '', flags: new Set<RegexFlag>(['g']), testText: '' },
   timestamp: { input: '' },
   jwt: { input: '' },
