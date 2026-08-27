@@ -217,7 +217,6 @@ export const zhCN = {
   'Enter text or a URL to create a downloadable QR code.': '输入文本或网址，生成可下载的二维码。',
   'Content': '内容',
   'Enter text or paste a URL...': '输入文本或粘贴网址…',
-  'Your content stays in this browser.': '内容仅在当前浏览器中处理。',
   'Generated QR code': '已生成的二维码',
   'QR code preview': '二维码预览',
   'Your generated code will appear here.': '生成的二维码将显示在这里。',

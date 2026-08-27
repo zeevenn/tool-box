@@ -25,7 +25,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Textarea } from '@/components/ui/textarea'
 import { useI18n } from '@/context/i18n-provider'
 import { useToolState } from '@/context/tool-state-provider'
@@ -165,7 +165,7 @@ export function QrCodeGenerator() {
   }
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 lg:overflow-hidden">
+    <div className="min-h-0 flex-1 overflow-y-auto lg:overflow-hidden">
       <div className="grid min-h-full w-full items-stretch gap-3 lg:h-full lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <Card className="h-full min-h-[32rem] lg:min-h-0">
           <CardHeader>
@@ -176,7 +176,7 @@ export function QrCodeGenerator() {
             <div className="grid h-full min-h-0 items-stretch gap-6 md:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
               <FieldGroup className="h-full min-h-0">
                 <Field className="h-full min-h-0">
-                  <FieldLabel htmlFor="qr-content">{t('Content')}</FieldLabel>
+                  <FieldLabel htmlFor="qr-content" className="sr-only">{t('Content')}</FieldLabel>
                   <Textarea
                     id="qr-content"
                     value={toolState.input}
@@ -186,7 +186,6 @@ export function QrCodeGenerator() {
                     spellCheck={false}
                     className="min-h-52 flex-1 resize-none md:min-h-0"
                   />
-                  <FieldDescription>{t('Your content stays in this browser.')}</FieldDescription>
                 </Field>
               </FieldGroup>
 
