@@ -22,6 +22,7 @@ export interface NavItem {
   path: string
   shortLabel?: string
   description: TranslationKey
+  frameless?: boolean
   group: NavGroup
   icon: LucideIcon
 }
@@ -86,6 +87,7 @@ export const navigationItems: NavItem[] = [
     shortLabel: 'QR Code',
     path: '/qr-code',
     description: 'Create downloadable QR codes and revisit recent history.',
+    frameless: true,
     group: 'Transform',
     icon: QrCode,
   },

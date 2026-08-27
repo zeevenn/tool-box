@@ -37,7 +37,12 @@ export function Layout({ children, className }: LayoutProps) {
                     </div>
                   </section>
 
-                  <section className="tool-workspace flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden rounded-xl border border-border/70 bg-card shadow-[0_18px_55px_-32px_oklch(0.2_0.05_265_/_0.35)]">
+                  <section
+                    className={cn(
+                      'tool-workspace flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden',
+                      !current.frameless && 'rounded-xl border border-border/70 bg-card shadow-[0_18px_55px_-32px_oklch(0.2_0.05_265_/_0.35)]',
+                    )}
+                  >
                     {children}
                   </section>
                 </div>
