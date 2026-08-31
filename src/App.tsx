@@ -25,7 +25,7 @@ function App() {
   const { resolvedTheme } = useTheme()
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Toaster position="top-center" richColors theme={resolvedTheme} />
       <Layout>
         <Suspense fallback={<div className="flex flex-1 items-center justify-center"><Loading /></div>}>

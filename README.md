@@ -9,7 +9,7 @@
 
 A fast, private, browser-based workspace for everyday developer utilities.
 
-[Live Demo](https://tool.ziven.me) · [Report a Bug](https://github.com/zeevenn/tool-box/issues) · [Request a Feature](https://github.com/zeevenn/tool-box/discussions)
+[Live Demo](https://zeevenn.github.io/tool-box/) · [Report a Bug](https://github.com/zeevenn/tool-box/issues) · [Request a Feature](https://github.com/zeevenn/tool-box/discussions)
 
 </div>
 
