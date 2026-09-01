@@ -9,7 +9,8 @@ export function useDynamicFavicon() {
       ) as HTMLLinkElement
 
       if (favicon) {
-        favicon.href = isDark ? '/logo-dark.svg' : '/logo.svg'
+        const fileName = isDark ? 'logo-dark.svg' : 'logo.svg'
+        favicon.href = `${import.meta.env.BASE_URL}${fileName}`
       }
     }
 
