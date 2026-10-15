@@ -33,6 +33,8 @@ export interface ToolState {
     output: string
     error: string | null
     indentSize: number
+    outputMode: 'format' | 'minify' | 'deserialize'
+    selectedField: string
   }
   base64: {
     text: string
@@ -82,7 +84,7 @@ const INITIAL_TOOL_STATE: ToolState = {
     overlayOpacity: 50,
     differenceThreshold: 24,
   },
-  jsonFormatter: { input: '', output: '', error: null, indentSize: 2 },
+  jsonFormatter: { input: '', output: '', error: null, indentSize: 2, outputMode: 'format', selectedField: 'document' },
   base64: { text: '', encoded: '', mode: 'encode' },
   urlEncode: { decoded: '', encoded: '' },
   hash: { input: '' },

@@ -31,7 +31,7 @@ Tool Box keeps the small jobs that interrupt development in one focused workspac
 | Workspace | **Scratchpad**      | Write, organize, copy, and download quick notes across multiple drafts.                                              |
 | Compare   | **Text Diff**       | Compare text or code with syntax-aware editors, change statistics, share links, and up to 20 locally saved snapshots. |
 | Compare   | **Image Diff**      | Compare two images side by side, as an overlay, with a slider, or through a pixel-difference view.                    |
-| Transform | **JSON Formatter**  | Format, minify, validate, and copy JSON with 2- or 4-space indentation.                                               |
+| Transform | **JSON Formatter**  | Format, minify, validate JSON, or deserialize escapes and inspect/copy individual string fields.                    |
 | Transform | **Base64**          | Encode and decode text, or load an image as Base64.                                                                   |
 | Transform | **URL Encode**      | Encode and decode URL-safe strings in real time.                                                                      |
 | Transform | **Hash Generator**  | Generate MD5, SHA-1, SHA-256, and SHA-512 hashes locally.                                                             |
