@@ -158,16 +158,10 @@ export function JsonFormatter() {
         </div>
       </div>
 
-      {isDeserialized && (
-        <Typography variant="muted" className="shrink-0 border-b border-border/70 px-4 py-2 text-xs">
-          {t('Escapes are decoded for reading. This view is plain text, not valid JSON.')}
-        </Typography>
-      )}
-
       {/* Editors */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
         <div className="flex min-h-0 min-w-0 flex-1 flex-col border-b border-border/70 md:border-r md:border-b-0">
-          <div className="flex h-12 shrink-0 items-center justify-between border-b border-border/70 bg-muted/35 px-4">
+          <div className="flex shrink-0 items-center justify-between border-b border-border/70 bg-muted/35 px-4 py-2">
             <Typography variant="muted" className="text-[11px] font-semibold uppercase tracking-[0.12em]">{t('Input')}</Typography>
           </div>
           <div className="relative flex-1 overflow-hidden">
@@ -182,25 +176,27 @@ export function JsonFormatter() {
         </div>
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <div className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border/70 bg-muted/35 px-4">
+          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border/70 bg-muted/35 px-4 py-2">
             <Typography variant="muted" className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.12em]">{t(isDeserialized ? 'Deserialized text' : 'Output')}</Typography>
             {isDeserialized && stringFields.length > 0 && (
-              <Select
-                value={activeField?.path ?? 'document'}
-                onValueChange={selectedField => setToolState(current => ({ ...current, selectedField }))}
-              >
-                <SelectTrigger size="sm" className="min-w-0 max-w-full sm:max-w-72" aria-label={t('View string field')}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectGroup>
-                    <SelectItem value="document">{t('Entire document')}</SelectItem>
-                    {stringFields.map(field => (
-                      <SelectItem key={field.path} value={field.path}>{field.path}</SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <div className="flex h-4 min-w-0 flex-1 items-center justify-end">
+                <Select
+                  value={activeField?.path ?? 'document'}
+                  onValueChange={selectedField => setToolState(current => ({ ...current, selectedField }))}
+                >
+                  <SelectTrigger size="sm" className="min-w-0 max-w-full py-0 data-[size=sm]:h-6 sm:max-w-72" aria-label={t('View string field')}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent position="popper">
+                    <SelectGroup>
+                      <SelectItem value="document">{t('Entire document')}</SelectItem>
+                      {stringFields.map(field => (
+                        <SelectItem key={field.path} value={field.path}>{field.path}</SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
             )}
           </div>
           {error
@@ -220,6 +216,11 @@ export function JsonFormatter() {
                   />
                 </div>
               )}
+          {isDeserialized && (
+            <Typography variant="muted" className="shrink-0 border-t border-border/70 px-4 py-2 text-xs">
+              {t('Escapes are decoded for reading. This view is plain text, not valid JSON.')}
+            </Typography>
+          )}
         </div>
       </div>
     </div>
