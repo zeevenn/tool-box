@@ -14,7 +14,7 @@
     "image"
   ],
   "scripts": {
-    "test": "node --test src/components/common/*.test.ts src/pages/text-diff/*.test.ts",
+    "test": "node --test src/components/common/*.test.ts src/pages/text-diff/*.test.ts src/pages/json-formatter/*.test.ts",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

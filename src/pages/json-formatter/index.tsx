@@ -12,16 +12,10 @@ import { useI18n } from '@/context/i18n-provider'
 import { useToolState } from '@/context/tool-state-provider'
 import { useCopyText } from '@/hooks/use-copy-text'
 
-import { deserializeJson, getJsonStringFields } from './deserialize'
+import { getJsonStringFields } from './deserialize'
+import { formatJson } from './format'
 
 const jsonLanguage = json()
-
-function renderOutput(input: string, mode: 'format' | 'minify' | 'deserialize', indentSize: number) {
-  const parsed: unknown = JSON.parse(input)
-  return mode === 'deserialize'
-    ? deserializeJson(parsed, indentSize)
-    : JSON.stringify(parsed, null, mode === 'minify' ? undefined : indentSize)
-}
 
 export function JsonFormatter() {
   const { t } = useI18n()
@@ -61,16 +55,9 @@ export function JsonFormatter() {
     }
 
     const timer = window.setTimeout(() => {
-      try {
-        setToolState(current => ({
-          ...current,
-          output: renderOutput(input, outputMode, indentSize),
-          error: null,
-        }))
-      }
-      catch (e) {
-        setToolState(current => ({ ...current, output: '', error: (e as Error).message }))
-      }
+      // React may run state updaters later, outside the caller's try/catch.
+      const result = formatJson(input, outputMode, indentSize)
+      setToolState(current => ({ ...current, ...result }))
     }, 200)
 
     autoFormatTimerRef.current = timer
@@ -84,13 +71,8 @@ export function JsonFormatter() {
       setToolState(current => ({ ...current, outputMode: mode, output: '', error: t('Input is empty') }))
       return
     }
-    try {
-      const output = renderOutput(input, mode, indentSize)
-      setToolState(current => ({ ...current, outputMode: mode, output, error: null }))
-    }
-    catch (e) {
-      setToolState(current => ({ ...current, outputMode: mode, output: '', error: (e as Error).message }))
-    }
+    const result = formatJson(input, mode, indentSize)
+    setToolState(current => ({ ...current, outputMode: mode, ...result }))
   }
 
   const validate = () => {
@@ -201,7 +183,7 @@ export function JsonFormatter() {
           </div>
           {error
             ? (
-                <div className="flex-1 p-3">
+                <div role="alert" className="flex-1 overflow-auto p-3">
                   <Typography variant="small" className="text-destructive font-mono">{error}</Typography>
                 </div>
               )
