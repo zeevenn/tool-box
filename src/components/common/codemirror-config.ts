@@ -6,6 +6,10 @@ import { defaultHighlightStyle, foldGutter, foldKeymap, indentOnInput, syntaxHig
 import { EditorState } from '@codemirror/state'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { EditorView, keymap, lineNumbers, placeholder as showPlaceholder } from '@codemirror/view'
+import { jsonBlockCopy } from './codemirror-json-copy.ts'
+
+// Keep large schemas precise while bounding work on unrelated inputs.
+export const MERGE_DIFF_CONFIG = { scanLimit: 10000, timeout: 1000 }
 
 interface EditorExtensionOptions {
   language?: LanguageSupport
@@ -13,6 +17,8 @@ interface EditorExtensionOptions {
   readOnly?: boolean
   placeholder?: string
   ariaLabel?: string
+  onCopyBlock?: (value: string) => void
+  copyBlockLabel?: string
 }
 
 export function createEditorExtensions({
@@ -21,6 +27,8 @@ export function createEditorExtensions({
   readOnly = false,
   placeholder,
   ariaLabel,
+  onCopyBlock,
+  copyBlockLabel,
 }: EditorExtensionOptions = {}): Extension[] {
   const extensions: Extension[] = [
     lineNumbers(),
@@ -38,6 +46,8 @@ export function createEditorExtensions({
     extensions.push(EditorView.contentAttributes.of({ 'aria-label': ariaLabel }))
   if (language)
     extensions.push(language)
+  if (onCopyBlock)
+    extensions.push(jsonBlockCopy(onCopyBlock, copyBlockLabel))
   if (!readOnly) {
     extensions.push(
       closeBrackets(),

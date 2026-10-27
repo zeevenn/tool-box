@@ -6,6 +6,7 @@ export default antfu({
   typescript: true,
   rules: {
     'pnpm/json-valid-catalog': 'off',
+    'test/no-import-node-test': 'off',
     // Allow exporting variants/hooks alongside components (common pattern for shadcn/ui)
     'react-refresh/only-export-components': ['warn', { allowExportNames: ['buttonVariants', 'typographyVariants'] }],
   },

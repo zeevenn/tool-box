@@ -4,7 +4,9 @@ import { EditorView } from '@codemirror/view'
 import { useEffect, useMemo, useRef } from 'react'
 
 import { createEditorExtensions } from '@/components/common/codemirror-config'
+import { useI18n } from '@/context/i18n-provider'
 import { useTheme } from '@/context/theme-provider'
+import { useCopyText } from '@/hooks/use-copy-text'
 
 export interface CodeMirrorEditorProps {
   value: string
@@ -32,6 +34,8 @@ export function CodeMirrorEditor({
   const valueRef = useRef(value)
   const callbacksRef = useRef({ onChange, onMount })
   const { resolvedTheme } = useTheme()
+  const { t } = useI18n()
+  const copyText = useCopyText()
 
   valueRef.current = value
   callbacksRef.current = { onChange, onMount }
@@ -43,8 +47,10 @@ export function CodeMirrorEditor({
       readOnly,
       placeholder,
       ariaLabel: ariaLabel ?? 'Code editor',
+      onCopyBlock: copyText,
+      copyBlockLabel: `${t('Copy')} JSON`,
     })
-  }, [ariaLabel, language, placeholder, readOnly, resolvedTheme])
+  }, [ariaLabel, language, placeholder, readOnly, resolvedTheme, copyText, t])
 
   useEffect(() => {
     if (!containerRef.current)

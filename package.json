@@ -14,6 +14,7 @@
     "image"
   ],
   "scripts": {
+    "test": "node --test src/components/common/*.test.ts",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

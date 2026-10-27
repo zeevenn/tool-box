@@ -4,8 +4,10 @@ import { MergeView } from '@codemirror/merge'
 import { EditorView } from '@codemirror/view'
 import { useEffect, useMemo, useRef } from 'react'
 
-import { createEditorExtensions } from '@/components/common/codemirror-config'
+import { createEditorExtensions, MERGE_DIFF_CONFIG } from '@/components/common/codemirror-config'
+import { useI18n } from '@/context/i18n-provider'
 import { useTheme } from '@/context/theme-provider'
+import { useCopyText } from '@/hooks/use-copy-text'
 
 const EMPTY_EXTENSIONS: Extension[] = []
 
@@ -43,6 +45,8 @@ export function CodeMirrorMerge({
   const containerRef = useRef<HTMLDivElement>(null)
   const mergeViewRef = useRef<MergeView | null>(null)
   const { resolvedTheme } = useTheme()
+  const { t } = useI18n()
+  const copyText = useCopyText()
 
   const callbacksRef = useRef({
     onOriginalChange,
@@ -63,8 +67,8 @@ export function CodeMirrorMerge({
   valuesRef.current = { originalValue, modifiedValue }
 
   const baseExtensions = useMemo((): Extension[] => {
-    return createEditorExtensions({ language, dark: resolvedTheme === 'dark' })
-  }, [resolvedTheme, language])
+    return createEditorExtensions({ language, dark: resolvedTheme === 'dark', onCopyBlock: copyText, copyBlockLabel: `${t('Copy')} JSON` })
+  }, [resolvedTheme, language, copyText, t])
 
   useEffect(() => {
     if (!containerRef.current)
@@ -134,6 +138,7 @@ export function CodeMirrorMerge({
       parent: containerRef.current,
       gutter: true,
       highlightChanges: true,
+      diffConfig: MERGE_DIFF_CONFIG,
     })
 
     mergeViewRef.current = mergeView
