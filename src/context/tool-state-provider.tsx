@@ -1,7 +1,11 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
 import type { DiffLanguage } from '@/pages/text-diff/use-diff-session'
 
-import { createContext, use, useCallback, useMemo, useState } from 'react'
+import { createContext, use, useCallback, useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
+
+import { useI18n } from '@/context/i18n-provider'
+import { DIFF_DRAFT_STORAGE_KEY, readDiffDraft } from '@/pages/text-diff/diff-draft'
 
 export type Base64Mode = 'encode' | 'decode'
 export type RegexFlag = 'g' | 'i' | 'm' | 's'
@@ -108,9 +112,20 @@ interface ToolStateContextValue {
 const ToolStateContext = createContext<ToolStateContextValue | null>(null)
 
 export function ToolStateProvider({ children }: { children: ReactNode }) {
-  // Tool drafts intentionally live only for the lifetime of this app instance.
-  // Sensitive inputs such as JWTs must not be written to browser storage here.
-  const [state, setState] = useState<ToolState>(INITIAL_TOOL_STATE)
+  const { t } = useI18n()
+  // Persist only the text diff; sensitive inputs such as JWTs stay in memory.
+  const [state, setState] = useState<ToolState>(() => ({
+    ...INITIAL_TOOL_STATE,
+    textDiff: readDiffDraft() ?? INITIAL_TOOL_STATE.textDiff,
+  }))
+  useEffect(() => {
+    try {
+      localStorage.setItem(DIFF_DRAFT_STORAGE_KEY, JSON.stringify(state.textDiff))
+    }
+    catch {
+      toast.error(`${t('Text Diff')}: ${t('Unable to save')}`, { id: 'text-diff-autosave-error' })
+    }
+  }, [state.textDiff, t])
   const value = useMemo(() => ({ state, setState }), [state])
 
   return <ToolStateContext value={value}>{children}</ToolStateContext>

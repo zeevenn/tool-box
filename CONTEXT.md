@@ -40,6 +40,7 @@ _Avoid_: Local Drop Item, snapshot
 
 - The workspace contains multiple **Tools**
 - A text comparison **Tool** owns exactly one active **Diff Session**
+- The active **Diff Session** automatically persists its text and language in browser storage and restores them after reload, independently of saved **Diff Snapshots**
 - A **Diff Session** contains zero to twenty **Diff Snapshots**
 - An image comparison **Tool** owns exactly one active **Image Comparison**
 - The workspace owns exactly one **Local Drop**
