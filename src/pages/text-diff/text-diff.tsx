@@ -3,8 +3,10 @@ import type { MergeView } from '@codemirror/merge'
 import type { DiffLanguage, DiffSide, DiffSnapshot } from './use-diff-session'
 import { javascript } from '@codemirror/lang-javascript'
 import { json } from '@codemirror/lang-json'
-import { ArrowLeftRight, CloudUpload, Copy, History as HistoryIcon, RotateCcw, Save, Share2, Trash2 } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { goToNextChunk, goToPreviousChunk } from '@codemirror/merge'
+import { EditorView } from '@codemirror/view'
+import { ArrowDown, ArrowLeftRight, ArrowUp, CloudUpload, Copy, History as HistoryIcon, RotateCcw, Save, Share2, Trash2 } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import { CodeMirrorMerge } from '@/components/common'
@@ -78,6 +80,8 @@ export function TextDiff() {
   } = useDiffSession()
   const [historyOpen, setHistoryOpen] = useState(false)
   const [confirmingClearHistory, setConfirmingClearHistory] = useState(false)
+  const mergeViewRef = useRef<MergeView | null>(null)
+  const activeDiffSideRef = useRef<'a' | 'b'>('b')
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -121,6 +125,7 @@ export function TextDiff() {
   })
 
   const handleMount = useCallback((view: MergeView) => {
+    mergeViewRef.current = view
     const aEditor = view.a.dom
     const bEditor = view.b.dom
 
@@ -189,7 +194,20 @@ export function TextDiff() {
   }
 
   const handleCopyDiff = () => copyText(copyableDiff, t('Diff copied to clipboard'))
-  const langExtension = getLanguageExtension(language)
+  const langExtension = useMemo(() => getLanguageExtension(language), [language])
+
+  const handleNavigateDiff = (command: typeof goToNextChunk) => {
+    const mergeView = mergeViewRef.current
+    if (!mergeView)
+      return
+    const editor = mergeView[activeDiffSideRef.current]
+    if (!command(editor) && mergeView.chunks.length === 1) {
+      const chunk = mergeView.chunks[0]
+      const anchor = activeDiffSideRef.current === 'a' ? chunk.fromA : chunk.fromB
+      editor.dispatch({ selection: { anchor }, effects: EditorView.scrollIntoView(anchor, { y: 'center' }) })
+    }
+    editor.focus()
+  }
 
   return (
     <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
@@ -214,6 +232,17 @@ export function TextDiff() {
           <ArrowLeftRight data-icon="inline-start" />
           <span className="hidden sm:inline">{t('Swap')}</span>
         </Button>
+
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={() => handleNavigateDiff(goToPreviousChunk)} disabled={originalText === modifiedText} aria-label={t('Previous difference')} title={t('Previous difference')}>
+            <ArrowUp data-icon="inline-start" />
+            <span className="hidden sm:inline">{t('Previous difference')}</span>
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => handleNavigateDiff(goToNextChunk)} disabled={originalText === modifiedText} aria-label={t('Next difference')} title={t('Next difference')}>
+            <ArrowDown data-icon="inline-start" />
+            <span className="hidden sm:inline">{t('Next difference')}</span>
+          </Button>
+        </div>
 
         <Button variant="ghost" size="sm" onClick={handleCopyDiff} title={t('Copy diff')}>
           <Copy data-icon="inline-start" />
@@ -333,7 +362,12 @@ export function TextDiff() {
       </div>
 
       {/* Editor */}
-      <div className="relative flex-1 overflow-hidden bg-card">
+      <div
+        className="relative flex-1 overflow-hidden bg-card"
+        onFocusCapture={(event) => {
+          activeDiffSideRef.current = mergeViewRef.current?.a.dom.contains(event.target) ? 'a' : 'b'
+        }}
+      >
         <CodeMirrorMerge
           originalValue={originalText}
           modifiedValue={modifiedText}

@@ -1,4 +1,6 @@
 export const zhCN = {
+  'Previous difference': '上一个差异',
+  'Next difference': '下一个差异',
   'Utility workspace': '实用工具工作台',
   'Tools': '工具',
   'Workspace': '工作区',
